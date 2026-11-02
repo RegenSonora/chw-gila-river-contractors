@@ -43,7 +43,7 @@ export function TimerRunning() {
 
   return (
     <Page
-      title="CHW Time Tracker"
+      title="CHW Gila River Contractors"
       aside={
         <HomeHeaderAside
           onChip={() => {

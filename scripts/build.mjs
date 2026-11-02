@@ -61,11 +61,11 @@ await esbuild({
     __APP_VERSION__: JSON.stringify(version),
     __SHELL__: JSON.stringify(shell),
   },
-  banner: { js: `// CHW Time Tracker ${version}` },
+  banner: { js: `// CHW Gila River Contractors ${version}` },
   logLevel: 'warning',
 });
 
 const indexPath = join(dist, 'index.html');
 writeFileSync(indexPath, injectCsp(readFileSync(indexPath, 'utf8')));
 
-console.log(`Built CHW Time Tracker ${version} into dist/`);
+console.log(`Built CHW Gila River Contractors ${version} into dist/`);
