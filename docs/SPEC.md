@@ -41,7 +41,10 @@ Each funding source is a JSON file in the repo, validated against a JSON Schema 
 
 ### TISUPP — Trauma-Informed Substance Use Prevention Program
 
-- **Not-to-exceed (NTE):** yes, entered by the CHW in Settings.
+The Gila River contractors bill TISUPP only (decision 0023).
+
+- **Not-to-exceed (NTE):** yes, prefilled at $10,320.00 (240 h × $20.00 + 240 h × $23.00); the CHW can change it in Settings.
+- **Rate:** $20.00 for the first 240 hours, then $23.00. The app reminds the CHW at 240 hours; the CHW changes the rate (§4, decision 0023).
 - **Certification text:** "I certify that the services listed were performed on the dates shown on the attached timesheet pages for the TISUPP grant, the hours are accurate, no participant names are included, and these hours have not been billed to Regenerating Sonora under any other funding source or to any other funder."
 - **Tasks (21) and core competencies:**
 
@@ -69,35 +72,29 @@ Each funding source is a JSON file in the repo, validated against a JSON Schema 
 | 20 | Meetings | Professional Skills & Conduct |
 | 21 | Training / continuing education | Professional Skills & Conduct |
 
-- **Budget lines (12):** New CHWs: training, stipends, field hours · CHW referrals · Outreach and marketing · Listening sessions · Community Atlas · Family Tree · Family Resilience Workshops · Youth Leadership Academy · Green Thumb Warriors · Full Moon Garden Parties · Youth and family field trips · Quarterly partnership meetings
+- **Budget lines (1):** CHW experience hours. Every hour the contractors track and bill goes on it (decision 0023).
 
-(The source spreadsheet combines "CHW referrals, outreach, marketing" into one line; Chris split it.)
-
-### Regen General Operating
-
-- **NTE:** none. No contract tracking box on its invoices.
-- **Tasks (22):** the 21 TISUPP tasks plus **Domestic support**, which has no core competency (blank).
-- **Budget lines (13):** the 12 TISUPP lines plus **Domestic support**.
-- **Certification text:** "I certify that the services listed were performed on the dates shown on the attached timesheet pages, the hours are accurate, and no participant names are included." The CHW always signs and certifies.
+(Regen General Operating, the second source at the split, is not in this app.)
 
 ## 4. CHW profile and settings
 
 - **Your details:** name, initials, mailing address. No agreement # and no service area.
-- **Per funding source the CHW works under:** hourly rate (from the agreement; TISUPP prefilled at $20.00) and, for TISUPP, the NTE amount. Setup asks for the rate; the NTE is entered later in Settings.
+- **Per funding source the CHW works under:** hourly rate (from the agreement; TISUPP prefilled at $20.00) and, for TISUPP, the NTE amount (prefilled at $10,320.00). Setup asks for the rate; the NTE can be changed in Settings. With one funding source, setup shows it without a checkbox (decision 0023).
 - **Initials:** used in invoice numbers. Changing them does not affect numbering.
 - **Rate changes:** one rate per funding source. The rate in effect when an invoice is generated applies to every entry on it and is then frozen in that invoice. When the rate is edited while uninvoiced entries exist for that source, ask: "You have N entries not yet invoiced. They will be billed at the new rate." with **Create invoice first**, **Change rate now**, **Cancel**. Retroactive raises are handled by the office outside the app.
+- **Raise at 240 hours (decision 0023):** once the hours on this phone's TISUPP invoices plus the hours waiting reach 240, Home reminds the CHW to generate an invoice and then change the rate to $23.00. The reminder stops once the rate is $23.00 or more. An invoice that crosses 240 hours is billed at one rate; the office settles any difference.
 - **NTE edits:** allowed (agreement amendments). Each invoice prints the current amount.
 
 ## 5. Logging time
 
-- **Funding source:** a chip in the header picks the source for new entries. The chip is locked while a timer runs. The task screen shows the source with **Change**.
+- **Funding source:** a chip in the header picks the source for new entries. The chip is locked while a timer runs. The task screen shows the source with **Change**. With one funding source set up there is no chip and no source row (decision 0023).
 - **Timer:** Start → large running clock with the largest button, **Stop**. The timer survives closing the app (the start time is stored). **Discard timer** needs a confirmation or Undo.
 - **Enter times instead:** date, start, end. An end earlier than the start means the next day.
 - **Rounding:** each entry rounds to the nearest 0.25 h. Chris accepted that per-entry rounding can bill slightly more than raw time.
 - **Too short:** an entry that rounds to 0 h (under 7.5 minutes) is blocked with a plain message; it is never saved.
 - **Overlaps:** blocked, compared on raw start and stop times.
 - **Entry date:** an entry belongs to its start date, including entries that cross midnight.
-- **Entry flow:** Stop (or enter times) → task and budget line (budget line defaults to the last one used; recent tasks first) → counts and notes → Save. A typical entry is 4 taps.
+- **Entry flow:** Stop (or enter times) → task and budget line (budget line defaults to the last one used, or is picked and hidden when the source has only one; recent tasks first) → counts and notes → Save. A typical entry is 4 taps.
 - **Counts (all optional, default 0):** Contacts, Referrals given, Referral follow-ups, Rides provided, Applications completed, plus "Add another count" (label + number).
 - **Notes:** optional, with the warning "Don't include client names. Notes appear on the timesheet."
 - **Editing:** entries can be edited or deleted until invoiced, then are locked. Save and delete show Undo.
