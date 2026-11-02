@@ -63,7 +63,7 @@ test('timer → task → counts → save, then undo', async ({ page }) => {
 
   await page.getByRole('button', { name: 'Undo' }).click();
   await expect(page.getByRole('status')).toContainText('Entry removed');
-  await expect(page.getByText('No TISUPP entries waiting.', { exact: false })).toBeVisible();
+  await expect(page.getByText('Start timer and start working or hand enter times.')).toBeVisible();
 });
 
 test('the next entry lists recent tasks first', async ({ page }) => {
@@ -74,7 +74,7 @@ test('the next entry lists recent tasks first', async ({ page }) => {
     end: '15:00',
     task: 'Client follow up',
   });
-  await page.getByRole('button', { name: 'Enter times instead' }).click();
+  await page.getByRole('button', { name: 'Hand enter time' }).click();
   await page.getByLabel('Date').fill('2026-10-30');
   await page.getByLabel('Start').fill('09:00');
   await page.getByLabel('End').fill('10:00');
@@ -85,7 +85,7 @@ test('the next entry lists recent tasks first', async ({ page }) => {
 
 test('split one entry between two tasks (decision 0024)', async ({ page }) => {
   await setUp(page);
-  await page.getByRole('button', { name: 'Enter times instead' }).click();
+  await page.getByRole('button', { name: 'Hand enter time' }).click();
   await page.getByLabel('Date').fill('2026-10-30');
   await page.getByLabel('Start').fill('09:12');
   await page.getByLabel('End').fill('10:37');
@@ -165,7 +165,7 @@ test('edit an entry, delete and undo', async ({ page }) => {
   await page.getByRole('button', { name: 'Delete entry' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Delete entry' }).click();
   await expect(page.getByRole('status')).toContainText('Deleted: 1.5 h, Client check in');
-  await expect(page.getByText('No TISUPP entries waiting.', { exact: false })).toBeVisible();
+  await expect(page.getByText('Start timer and start working or hand enter times.')).toBeVisible();
   await page.getByRole('button', { name: 'Undo' }).click();
   await expect(page.getByText('1 entry · 1.5 h · $30.00')).toBeVisible();
 });
