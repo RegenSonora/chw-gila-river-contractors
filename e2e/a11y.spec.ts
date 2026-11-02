@@ -19,14 +19,14 @@ for (const colorScheme of ['light', 'dark'] as const) {
       await expectAccessible(page, 'home, empty');
       // No source picker: one source has no chip (decision 0023).
 
-      await page.getByRole('button', { name: 'Enter times instead' }).click();
+      await page.getByRole('button', { name: 'Hand enter time' }).click();
       await page.getByLabel('Date').fill('2026-10-30');
       await page.getByLabel('Start').fill('09:12');
       await page.getByLabel('End').fill('10:37');
       await expectAccessible(page, 'enter times');
       await page.getByRole('button', { name: 'Next' }).click();
       await page.getByRole('button', { name: 'Next' }).click();
-      await expect(page.getByText('Pick what you did.')).toBeVisible();
+      await expect(page.getByText('Check what you did.')).toBeVisible();
       await expectAccessible(page, 'task step with errors');
       await pickTask(page, 'Client check in');
       await page.getByRole('button', { name: '+ Add another count' }).click();
@@ -70,7 +70,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
       await page.getByRole('dialog').getByRole('button', { name: 'Discard timer' }).click();
 
       // Invoices (M4): preview, created, the unshared question, past invoices.
-      await page.getByRole('button', { name: 'Generate TISUPP invoice' }).click();
+      await page.getByRole('button', { name: 'Generate Regen Invoice' }).click();
       await expect(heading(page, 'New invoice')).toBeVisible();
       await expectAccessible(page, 'invoice preview');
       await page.getByRole('button', { name: 'Create invoice files' }).click();

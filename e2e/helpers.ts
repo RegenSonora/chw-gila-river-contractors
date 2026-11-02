@@ -34,7 +34,7 @@ export async function setUp(page: Page): Promise<void> {
   await expect(heading(page, 'CHW Gila River Contractors')).toBeVisible();
 }
 
-/** Enter times → task → Save, from Home. The one budget line is picked for you (decision 0023). */
+/** Enter times → one task → Save, from Home. The one budget line is picked for you (decision 0023). */
 export async function addEntry(
   page: Page,
   entry: {
@@ -44,7 +44,7 @@ export async function addEntry(
     task?: string;
   },
 ): Promise<void> {
-  await page.getByRole('button', { name: 'Enter times instead' }).click();
+  await page.getByRole('button', { name: 'Hand enter time' }).click();
   await expect(heading(page, 'Enter times')).toBeVisible();
   // In WebKit a fill right after the screen mounts sometimes fires no input event, and the
   // field shows today's date again. Fill until all three values stick.
@@ -62,9 +62,14 @@ export async function addEntry(
   await expect(heading(page, 'CHW Gila River Contractors')).toBeVisible();
 }
 
+export function taskBox(page: Page, task: string) {
+  return page.getByRole('checkbox', { name: new RegExp(`^${task}`) });
+}
+
+/** Check one task and go on: it gets all the hours, so there is no split step (decision 0024). */
 export async function pickTask(page: Page, task: string): Promise<void> {
   await expect(heading(page, 'What did you do?')).toBeVisible();
-  await page.getByRole('radio', { name: new RegExp(`^${task}`) }).check();
+  await taskBox(page, task).check();
   await page.getByRole('button', { name: 'Next' }).click();
   await expect(heading(page, 'Counts and notes')).toBeVisible();
   await expect(page.getByText('Step 2 of 2')).toBeVisible();

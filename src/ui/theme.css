@@ -26,6 +26,10 @@
   --disabled-bg: #e1e4e8;
   --disabled-fg: #3d434b;
   --backdrop: rgb(26 28 31 / 60%);
+  /* Decision 0025: the icon's field green with dark brown text (5.6:1), same in light and dark. */
+  --green: #5fa845;
+  --green-border: #4c8f37;
+  --brown: #2e1a0b;
   --tap-min: 44px;
   --button-min: 56px;
   font-family:
@@ -244,6 +248,12 @@ p {
 .btn-start {
   min-height: 72px;
   font-size: 22px;
+}
+
+.btn-green {
+  background: var(--green);
+  border-color: var(--green-border);
+  color: var(--brown);
 }
 
 .btn-small {
@@ -1255,4 +1265,33 @@ p {
   font-size: 15px;
   font-weight: 400;
   color: var(--muted);
+}
+
+/* Split your time (decision 0024): what is left to assign. */
+.split {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.split-bar {
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 650;
+}
+
+.split-ok {
+  background: var(--accent-tint);
+}
+
+.split-left {
+  background: var(--warn-bg);
+  color: var(--warn-fg);
+}
+
+.split-over {
+  background: var(--err-bg);
+  color: var(--err-fg);
 }
