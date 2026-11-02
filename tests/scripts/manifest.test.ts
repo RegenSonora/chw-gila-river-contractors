@@ -22,7 +22,7 @@ function pngSize(path: string): string {
   return `${String(png.readUInt32BE(16))}x${String(png.readUInt32BE(20))}`;
 }
 
-describe('manifest (SPEC §2, §10; decision 0015)', () => {
+describe('manifest (SPEC §2, §10; decision 0017)', () => {
   it('installs as "CHW Time Tracker", standalone, inside the app folder', () => {
     expect(manifest.name).toBe('CHW Time Tracker');
     expect(manifest).toMatchObject({

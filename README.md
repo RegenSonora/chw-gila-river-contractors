@@ -85,7 +85,7 @@ Pushes to `main` run CI and, when every check passes, deploy `dist/` to GitHub P
 
 1. Set `version` in `package.json` (Settings shows it as `0.9.0 (a1b2c3d)`, decision 0016) and merge to `main`. CI deploys to Pages.
 2. Run the [release checklist](docs/release-checklist.md) on one iPhone and one Android phone.
-3. Icons are generated: `node scripts/make-icons.mjs` rewrites `public/icons/` (decision 0015); commit the output.
+3. Icons are generated: `node scripts/make-icons.mjs` rewrites `public/icons/` (decision 0017); commit the output.
 
 ### Layout
 
