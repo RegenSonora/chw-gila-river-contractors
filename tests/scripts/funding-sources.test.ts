@@ -1,3 +1,4 @@
+import { readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { checkFundingSources, makeValidator } from '../../scripts/lib/funding-sources.mjs';
@@ -32,40 +33,28 @@ describe('funding source files', () => {
     expect(checkFundingSources(root)).toEqual([]);
   });
 
-  it('rename the survey task, keeping its id, at version 2 (decision 0019)', () => {
-    for (const source of [tisupp, readSource('regen-general-operating')]) {
-      expect(source['version']).toBe(2);
-      expect(source.tasks.find((t) => t['id'] === 'planning-and-conducting-surveys')).toMatchObject(
-        {
-          name: 'Individual and community assessment',
-          core_competency: 'Individual & Community Assessment',
-        },
-      );
-    }
+  it('ship TISUPP only (decision 0023)', () => {
+    const files = readdirSync(join(root, 'src', 'funding-sources')).filter((f) =>
+      f.endsWith('.json'),
+    );
+    expect(files).toEqual(['tisupp.json']);
   });
 
-  it('TISUPP has 21 tasks, 12 budget lines, an NTE and a $20.00 default rate (SPEC §3, §4)', () => {
+  it('TISUPP has 21 tasks, one CHW experience hours line, $20.00 then $23.00 after 240 hours and a $10,320 NTE (decision 0023)', () => {
     expect(tisupp['code']).toBe('TISUPP');
+    expect(tisupp['version']).toBe(3);
     expect(tisupp.tasks).toHaveLength(21);
-    expect(tisupp.budget_lines).toHaveLength(12);
+    expect(tisupp.tasks.find((t) => t['id'] === 'planning-and-conducting-surveys')).toMatchObject({
+      name: 'Individual and community assessment',
+    });
+    expect(tisupp.budget_lines).toEqual([
+      { id: 'chw-experience-hours', name: 'CHW experience hours' },
+    ]);
     expect(tisupp['has_nte']).toBe(true);
     expect(tisupp['default_rate_cents']).toBe(2000);
-  });
-
-  it('Regen General Operating adds Domestic support with no competency and has no NTE (SPEC §3)', () => {
-    const regen = readSource('regen-general-operating');
-    expect(regen['code']).toBe('REGEN-GO');
-    expect(regen['has_nte']).toBe(false);
-    expect(regen.tasks).toHaveLength(22);
-    expect(regen.budget_lines).toHaveLength(13);
-    expect(regen.tasks.slice(0, 21)).toEqual(tisupp.tasks);
-    expect(regen.budget_lines.slice(0, 12)).toEqual(tisupp.budget_lines);
-    expect(regen.tasks[21]).toEqual({
-      id: 'domestic-support',
-      name: 'Domestic support',
-      core_competency: null,
-    });
-    expect(regen.budget_lines[12]).toEqual({ id: 'domestic-support', name: 'Domestic support' });
+    expect(tisupp['rate_step']).toEqual({ after_quarters: 960, rate_cents: 2300 });
+    // 240 h at $20.00 + 240 h at $23.00
+    expect(tisupp['default_nte_cents']).toBe(240 * 2000 + 240 * 2300);
   });
 });
 
@@ -105,8 +94,19 @@ describe('funding source schema', () => {
       '/tasks has duplicate id "outreach"',
     );
     expect(
-      changed((s) => (item(s.budget_lines, 1)['name'] = item(s.budget_lines, 0)['name'])),
+      changed((s) => s.budget_lines.push({ id: 'other', name: 'CHW experience hours' })),
     ).not.toEqual([]);
+  });
+
+  it('rejects a bad default NTE or rate step', () => {
+    expect(changed((s) => (s['default_nte_cents'] = 0))).not.toEqual([]);
+    expect(changed((s) => (s['default_nte_cents'] = 10.5))).not.toEqual([]);
+    expect(changed((s) => (s['rate_step'] = { after_quarters: 960 }))).not.toEqual([]);
+    expect(changed((s) => (s['rate_step'] = { after_quarters: 0, rate_cents: 2300 }))).not.toEqual(
+      [],
+    );
+    expect(changed((s) => delete s['rate_step'])).toEqual([]);
+    expect(changed((s) => delete s['default_nte_cents'])).toEqual([]);
   });
 
   it('rejects empty lists', () => {

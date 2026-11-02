@@ -1,6 +1,6 @@
 // WCAG 2.1 AA (axe) on every M3 screen, in light and dark (SPEC §10).
 import { expect, test } from '@playwright/test';
-import { addEntry, expectAccessible, heading, pickTaskAndLine, setUp, ZONE } from './helpers.js';
+import { addEntry, expectAccessible, heading, pickTask, setUp, ZONE } from './helpers.js';
 
 test.use({ timezoneId: ZONE });
 
@@ -15,13 +15,9 @@ for (const colorScheme of ['light', 'dark'] as const) {
       await expect(heading(page, 'Set up')).toBeVisible();
       await expectAccessible(page, 'setup');
 
-      await setUp(page, { regen: true });
+      await setUp(page);
       await expectAccessible(page, 'home, empty');
-
-      await page.getByRole('button', { name: /Funding source TISUPP/ }).click();
-      await expect(page.getByRole('dialog')).toBeVisible();
-      await expectAccessible(page, 'source picker');
-      await page.getByRole('button', { name: 'Cancel' }).click();
+      // No source picker: one source has no chip (decision 0023).
 
       await page.getByRole('button', { name: 'Enter times instead' }).click();
       await page.getByLabel('Date').fill('2026-10-30');
@@ -32,7 +28,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
       await page.getByRole('button', { name: 'Next' }).click();
       await expect(page.getByText('Pick what you did.')).toBeVisible();
       await expectAccessible(page, 'task step with errors');
-      await pickTaskAndLine(page, 'Client check in', 'CHW referrals');
+      await pickTask(page, 'Client check in');
       await page.getByRole('button', { name: '+ Add another count' }).click();
       await expectAccessible(page, 'counts step');
       await page.getByRole('button', { name: 'Remove this count' }).click();

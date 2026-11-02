@@ -36,9 +36,13 @@ test('create, share and re-share an invoice', async ({ page }) => {
   await expect(page.getByText(/^CC-\d{4}-001$/)).toBeVisible();
   await expect(page.getByText('8 on 8 dates (2 timesheet pages)')).toBeVisible();
   await expect(page.getByText('$20.00 / h')).toBeVisible();
-  await expect(page.getByRole('row', { name: 'CHW referrals 8.00 h $160.00' })).toBeVisible();
+  await expect(
+    page.getByRole('row', { name: 'CHW experience hours 8.00 h $160.00' }),
+  ).toBeVisible();
   await expect(page.getByRole('row', { name: 'Total 8.00 h $160.00' })).toBeVisible();
-  await expect(page.getByText('Enter your not-to-exceed amount in Settings.')).toBeVisible();
+  // The NTE comes prefilled from the source (decision 0023): $10,320.00 − $160.00.
+  await expect(page.getByText('$10,320.00')).toBeVisible();
+  await expect(page.getByText('$10,160.00')).toBeVisible();
   await expect(page.getByText('These 8 entries will be locked.')).toBeVisible();
 
   await page.getByRole('button', { name: 'Create invoice files' }).click();
@@ -67,7 +71,7 @@ test('create, share and re-share an invoice', async ({ page }) => {
   ]);
   const pdf = await readPdf(new Uint8Array(first?.[0]?.bytes ?? []));
   expect(pdf).toHaveLength(3);
-  expect(pdf[0]?.text).toContain('CHW referrals 8.00 $20.00 $160.00');
+  expect(pdf[0]?.text).toContain('CHW experience hours 8.00 $20.00 $160.00');
   expect(pdf[0]?.text).toContain('Amount due 8.00 $160.00');
   expect(pdf[0]?.text).toContain(`${number} · Page 1 of 3`);
   expect(pdf[1]?.text).toContain('Dates worked 1–7 of 8');

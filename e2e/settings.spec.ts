@@ -37,21 +37,22 @@ test('changing the rate with entries waiting asks first', async ({ page }) => {
   await expect(page.getByText('1 entry · 1.5 h · $33.00')).toBeVisible();
 });
 
-test('a funding source can be added later', async ({ page }) => {
+test('TISUPP only, with the NTE prefilled and the raise named (decision 0023)', async ({
+  page,
+}) => {
+  await page.goto('./');
+  await expect(heading(page, 'Set up')).toBeVisible();
+  await expect(page.getByRole('checkbox')).toHaveCount(0);
+  await expect(page.getByLabel('Hourly rate for TISUPP')).toHaveValue('20.00');
+  await expect(page.getByText(/It goes up to \$23\.00 after 240 hours\./)).toBeVisible();
+  await expect(page.getByText(/Your not-to-exceed amount is set to \$10,320\.00\./)).toBeVisible();
   await setUp(page);
-  await page.getByRole('button', { name: 'Settings' }).click();
-  await page.getByRole('button', { name: 'Add REGEN-GO' }).click();
-  await page.getByLabel('Hourly rate for REGEN-GO').fill('18.00');
-  await expect(page.getByText('No not-to-exceed amount for this funding source.')).toBeVisible();
-  await page.getByRole('button', { name: 'Save changes' }).click();
-  await expect(page.getByRole('status')).toContainText('Settings saved');
 
-  await page.getByRole('button', { name: /Funding source TISUPP/ }).click();
-  await page
-    .getByRole('dialog')
-    .getByRole('button', { name: /^REGEN-GO/ })
-    .click();
-  await expect(page.getByRole('button', { name: /Funding source REGEN-GO/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Settings' }).click();
+  await expect(page.getByLabel('Not-to-exceed amount for TISUPP')).toHaveValue('10320.00');
+  await expect(page.getByText(/It goes up to \$23\.00 after 240 hours\./)).toBeVisible();
+  await expect(page.getByRole('button', { name: /^Add / })).toHaveCount(0);
+  await expect(page.getByText(/all funding sources/)).toHaveCount(0);
 });
 
 test('NTE and next invoice number are saved', async ({ page }) => {

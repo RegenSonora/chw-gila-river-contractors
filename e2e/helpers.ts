@@ -24,21 +24,17 @@ export function heading(page: Page, name: string | RegExp) {
   return page.getByRole('heading', { level: 1, name });
 }
 
-/** Fill in setup with TISUPP at $20.00 (and REGEN-GO at $18.00 when asked). */
-export async function setUp(page: Page, options: { regen?: boolean } = {}): Promise<void> {
+/** Fill in setup: TISUPP, the only source, at its prefilled $20.00 (decision 0023). */
+export async function setUp(page: Page): Promise<void> {
   await page.goto('./');
   await expect(heading(page, 'Set up')).toBeVisible();
   await page.getByLabel('Your name').fill('Carmen Cruz');
   await page.getByLabel('Initials').fill('cc');
-  if (options.regen) {
-    await page.getByRole('checkbox', { name: /REGEN-GO/ }).check();
-    await page.getByLabel('Hourly rate for REGEN-GO').fill('18.00');
-  }
   await page.getByRole('button', { name: 'Save and start' }).click();
   await expect(heading(page, 'CHW Gila River Contractors')).toBeVisible();
 }
 
-/** Enter times → task and budget line → Save, from Home. */
+/** Enter times → task → Save, from Home. The one budget line is picked for you (decision 0023). */
 export async function addEntry(
   page: Page,
   entry: {
@@ -46,7 +42,6 @@ export async function addEntry(
     start: string;
     end: string;
     task?: string;
-    line?: string;
   },
 ): Promise<void> {
   await page.getByRole('button', { name: 'Enter times instead' }).click();
@@ -62,18 +57,13 @@ export async function addEntry(
     await expect(page.getByLabel('End')).toHaveValue(entry.end, { timeout: 500 });
   }).toPass();
   await page.getByRole('button', { name: 'Next' }).click();
-  await pickTaskAndLine(page, entry.task ?? 'Client check in', entry.line ?? 'CHW referrals');
+  await pickTask(page, entry.task ?? 'Client check in');
   await page.getByRole('button', { name: 'Save entry' }).click();
   await expect(heading(page, 'CHW Gila River Contractors')).toBeVisible();
 }
 
-export async function pickTaskAndLine(page: Page, task: string, line: string): Promise<void> {
+export async function pickTask(page: Page, task: string): Promise<void> {
   await expect(heading(page, 'What did you do?')).toBeVisible();
-  await page
-    .getByRole('button', { name: /^(Not picked yet|.+) (Choose|Change)$/ })
-    .nth(1)
-    .click();
-  await page.getByRole('dialog').getByRole('button', { name: line, exact: true }).click();
   await page.getByRole('radio', { name: new RegExp(`^${task}`) }).check();
   await page.getByRole('button', { name: 'Next' }).click();
   await expect(heading(page, 'Counts and notes')).toBeVisible();
