@@ -1,6 +1,6 @@
 # CHW Time Tracker
 
-A lightweight, offline phone app for Community Health Workers at Regenerating Sonora, Inc. CHWs log time against a funding source, then create an invoice PDF and two CSV files to sign and email.
+A lightweight, offline phone app for Community Health Workers at Regenerating Sonora, Inc. CHWs log time against a funding source, then create an invoice PDF, a picture of the invoice page and two CSV files to sign and email.
 
 - Live app: https://regensonora.github.io/chw-timesheet/
 - Status: **0.9.0, pilot release.** Logging time, invoices, sharing and offline use all work. One or two CHWs run it alongside the spreadsheet before everyone switches (build plan M6).
@@ -35,8 +35,8 @@ Then fill in setup: your name, initials, mailing address, and the hourly rate fr
 ### Invoicing
 
 1. On Home, tap **Generate … invoice**. Check the preview, then tap **Create invoice files**.
-2. Tap **Share files** and email the three files to yourself.
-3. Sign the PDF and email it with both CSV files to your reviewer.
+2. Tap **Share files** and email the four files to yourself.
+3. Sign the PDF, or the picture (PNG) of the invoice page in your photo app. Sign one, not both. Email the signed file with both CSV files to your reviewer.
 
 The full steps, with how to sign on iPhone and Android: [docs/signing-procedure.md](docs/signing-procedure.md). Need the files again? **Settings › Past invoices**.
 
