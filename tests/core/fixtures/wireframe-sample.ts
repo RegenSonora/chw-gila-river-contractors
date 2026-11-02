@@ -4,19 +4,15 @@
 import { emptyCounts } from '../../../src/core/counts';
 import type { InvoiceInput } from '../../../src/core/invoice';
 import type { Counts, Entry, Invoice } from '../../../src/core/types';
-import { findFundingSource } from '../../../src/funding-sources';
+import type { FundingSourceConfig } from '../../../src/core/types';
+// Frozen copies of the sources as they were at the split, with 12 and 13 budget lines, so the
+// rule and file tests keep covering many lines. The app ships a one-line TISUPP (decision 0023).
+import regenJson from './sources/regen-general-operating.json';
+import tisuppJson from './sources/tisupp-v2.json';
 
-export const tisupp = (() => {
-  const source = findFundingSource('tisupp');
-  if (!source) throw new Error('TISUPP source missing');
-  return source;
-})();
+export const tisupp = tisuppJson as FundingSourceConfig;
 
-export const regen = (() => {
-  const source = findFundingSource('regen-general-operating');
-  if (!source) throw new Error('Regen General Operating source missing');
-  return source;
-})();
+export const regen = regenJson as FundingSourceConfig;
 
 /** A value the test knows is there (the lint rules forbid `!`). */
 export function must<T>(value: T | undefined): T {

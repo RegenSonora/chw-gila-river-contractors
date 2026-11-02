@@ -3,9 +3,14 @@
   "id": "tisupp",
   "code": "TISUPP",
   "name": "Trauma-Informed Substance Use Prevention Program",
-  "version": 2,
+  "version": 3,
   "has_nte": true,
   "default_rate_cents": 2000,
+  "default_nte_cents": 1032000,
+  "rate_step": {
+    "after_quarters": 960,
+    "rate_cents": 2300
+  },
   "certification_text": "I certify that the services listed were performed on the dates shown on the attached timesheet pages for the TISUPP grant, the hours are accurate, no participant names are included, and these hours have not been billed to Regenerating Sonora under any other funding source or to any other funder.",
   "tasks": [
     {
@@ -116,52 +121,8 @@
   ],
   "budget_lines": [
     {
-      "id": "new-chws",
-      "name": "New CHWs: training, stipends, field hours"
-    },
-    {
-      "id": "chw-referrals",
-      "name": "CHW referrals"
-    },
-    {
-      "id": "outreach-and-marketing",
-      "name": "Outreach and marketing"
-    },
-    {
-      "id": "listening-sessions",
-      "name": "Listening sessions"
-    },
-    {
-      "id": "community-atlas",
-      "name": "Community Atlas"
-    },
-    {
-      "id": "family-tree",
-      "name": "Family Tree"
-    },
-    {
-      "id": "family-resilience-workshops",
-      "name": "Family Resilience Workshops"
-    },
-    {
-      "id": "youth-leadership-academy",
-      "name": "Youth Leadership Academy"
-    },
-    {
-      "id": "green-thumb-warriors",
-      "name": "Green Thumb Warriors"
-    },
-    {
-      "id": "full-moon-garden-parties",
-      "name": "Full Moon Garden Parties"
-    },
-    {
-      "id": "youth-and-family-field-trips",
-      "name": "Youth and family field trips"
-    },
-    {
-      "id": "quarterly-partnership-meetings",
-      "name": "Quarterly partnership meetings"
+      "id": "chw-experience-hours",
+      "name": "CHW experience hours"
     }
   ]
 }
