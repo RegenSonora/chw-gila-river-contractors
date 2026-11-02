@@ -116,11 +116,12 @@ Each funding source is a JSON file in the repo, validated against a JSON Schema 
 
 ## 7. Output files
 
-One "Create invoice files" action produces three files and shares them together through the phone's share sheet (download fallback where sharing is not supported).
+One "Create invoice files" action produces four files and shares them together through the phone's share sheet (download fallback where sharing is not supported).
 
 | File | Name | Content |
 |---|---|---|
-| Invoice PDF | `<SOURCE>_<INVOICE#>_<first-date>_to_<last-date>.pdf` | Page 1 invoice; pages 2+ timesheet. The only file that is signed. |
+| Invoice PDF | `<SOURCE>_<INVOICE#>_<first-date>_to_<last-date>.pdf` | Page 1 invoice; pages 2+ timesheet. Signed, unless the picture is signed instead. |
+| Invoice picture | `<SOURCE>_<INVOICE#>_invoice.png` | Page 1 as a PNG, 200 dpi, for signing in a photo app (decision 0018). Sign the PDF or the picture, not both. |
 | Timesheet CSV | `<SOURCE>_<INVOICE#>_timesheet.csv` | The timesheet grid, same content as the PDF pages |
 | Entry log CSV | `<SOURCE>_<INVOICE#>_entries.csv` | One row per entry, raw start and stop times |
 
@@ -209,8 +210,8 @@ Total hours,,,1.50,1.50,
 Option A, no in-app signing:
 
 1. The CHW shares the files and emails them to themselves.
-2. The CHW signs the PDF (iPhone Markup, or Adobe Acrobat Reader Fill & Sign on Android).
-3. The CHW emails the signed PDF and both CSVs to the reviewer.
+2. The CHW signs the PDF (iPhone Markup, or Adobe Acrobat Reader Fill & Sign on Android), or the picture of page 1 in a photo app (decision 0018).
+3. The CHW emails the signed file and both CSVs to the reviewer.
 4. The reviewer signs and sends everything to the office.
 
 Guardrails, written in a one-page procedure (`docs/signing-procedure.md`, CC BY 4.0): email only, never edit a signed file (corrections are a new invoice from the app), the office keeps the final PDF with its email thread. Office lines are signed on paper.
