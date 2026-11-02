@@ -57,7 +57,7 @@ export function TaskStep() {
   const missingLine = !draft.budget_line_id;
   return (
     <Page
-      title="New entry"
+      title="What did you do?"
       back
       aside={<span class="step-count">Step 1 of 2</span>}
       footer={
@@ -96,7 +96,7 @@ export function CountsStep() {
   };
   return (
     <Page
-      title="New entry"
+      title="Counts and notes"
       back
       aside={<span class="step-count">Step 2 of 2</span>}
       footer={

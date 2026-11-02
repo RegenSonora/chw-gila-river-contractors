@@ -68,7 +68,7 @@ export async function addEntry(
 }
 
 export async function pickTaskAndLine(page: Page, task: string, line: string): Promise<void> {
-  await expect(heading(page, 'New entry')).toBeVisible();
+  await expect(heading(page, 'What did you do?')).toBeVisible();
   await page
     .getByRole('button', { name: /^(Not picked yet|.+) (Choose|Change)$/ })
     .nth(1)
@@ -76,6 +76,7 @@ export async function pickTaskAndLine(page: Page, task: string, line: string): P
   await page.getByRole('dialog').getByRole('button', { name: line, exact: true }).click();
   await page.getByRole('radio', { name: new RegExp(`^${task}`) }).check();
   await page.getByRole('button', { name: 'Next' }).click();
+  await expect(heading(page, 'Counts and notes')).toBeVisible();
   await expect(page.getByText('Step 2 of 2')).toBeVisible();
 }
 
