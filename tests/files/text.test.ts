@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { entriesCsvName, pdfName, timesheetCsvName } from '../../src/files/names';
+import { entriesCsvName, pdfName, pngName, timesheetCsvName } from '../../src/files/names';
 import { dateRange, longDate, monthDay, weekday } from '../../src/files/text';
 import { sampleInvoice } from './helpers';
 
@@ -9,6 +9,7 @@ describe('file names (SPEC §7, decision 0006)', () => {
     expect(pdfName(invoice)).toBe('TISUPP_CC-2026-004_2026-10-20_to_2026-10-30.pdf');
     expect(timesheetCsvName(invoice)).toBe('TISUPP_CC-2026-004_timesheet.csv');
     expect(entriesCsvName(invoice)).toBe('TISUPP_CC-2026-004_entries.csv');
+    expect(pngName(invoice)).toBe('TISUPP_CC-2026-004_invoice.png');
   });
 
   it('use the short code', () => {
