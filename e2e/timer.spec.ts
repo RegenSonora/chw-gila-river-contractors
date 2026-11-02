@@ -4,7 +4,7 @@ import { addEntry, heading, setUp, ZONE } from './helpers.js';
 
 test.use({ timezoneId: ZONE });
 
-test('survives a reload with the chip locked', async ({ page }) => {
+test('survives a reload; no source chip with one source', async ({ page }) => {
   await setUp(page);
   await page.getByRole('button', { name: 'Start timer' }).click();
   await expect(page.getByRole('timer')).toBeVisible();
@@ -12,10 +12,8 @@ test('survives a reload with the chip locked', async ({ page }) => {
   await page.reload();
   await expect(page.getByRole('timer')).toBeVisible();
   await expect(page.getByText('Timer running · TISUPP')).toBeVisible();
-  const chip = page.getByRole('button', {
-    name: 'Funding source TISUPP, locked while the timer runs',
-  });
-  await expect(chip).toBeDisabled();
+  // Decision 0023: nothing to switch to, so no chip at all.
+  await expect(page.getByRole('button', { name: /^Funding source/ })).toHaveCount(0);
 });
 
 test('Discard timer asks first', async ({ page }) => {

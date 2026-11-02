@@ -1,13 +1,13 @@
 // The whole job end to end (BUILD_PLAN M5): setup → entries over 9 dates → invoice → files →
 // re-share, with axe on each screen (SPEC §5–§8, §10).
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 import { readPdf } from '../tests/files/pdf-reader.js';
 import {
   addEntry,
   expectAccessible,
   heading,
   parseCsv,
-  pickTaskAndLine,
+  pickTask,
   setUp,
   readPng,
   sharedFiles,
@@ -17,50 +17,17 @@ import {
 
 test.use({ timezoneId: ZONE });
 
-async function pickSource(page: Page, code: string): Promise<void> {
-  await page.getByRole('button', { name: /^Funding source .+\. Change$/ }).click();
-  await page
-    .getByRole('dialog')
-    .getByRole('button', { name: new RegExp(`^${code}`) })
-    .click();
-  await expect(page.getByRole('button', { name: `Funding source ${code}. Change` })).toBeVisible();
-}
-
 /** TISUPP entries typed in, on 8 dates; the timer adds the 9th. 10.5 h. */
 const TYPED = [
   { date: '2026-10-19', start: '09:00', end: '10:00' },
-  {
-    date: '2026-10-20',
-    start: '13:00',
-    end: '14:30',
-    task: 'Outreach',
-    line: 'Outreach and marketing',
-  },
+  { date: '2026-10-20', start: '13:00', end: '14:30', task: 'Outreach' },
   { date: '2026-10-21', start: '09:00', end: '09:45' },
-  {
-    date: '2026-10-22',
-    start: '10:00',
-    end: '12:00',
-    task: 'Training / continuing education',
-    line: 'New CHWs: training, stipends, field hours',
-  },
+  { date: '2026-10-22', start: '10:00', end: '12:00', task: 'Training / continuing education' },
   // Crosses midnight: belongs to its start date (SPEC §5).
   { date: '2026-10-23', start: '22:30', end: '00:15' },
-  {
-    date: '2026-10-26',
-    start: '09:00',
-    end: '10:00',
-    task: 'Outreach',
-    line: 'Outreach and marketing',
-  },
+  { date: '2026-10-26', start: '09:00', end: '10:00', task: 'Outreach' },
   { date: '2026-10-27', start: '09:00', end: '11:00' },
-  {
-    date: '2026-10-28',
-    start: '09:00',
-    end: '09:30',
-    task: 'Outreach',
-    line: 'Outreach and marketing',
-  },
+  { date: '2026-10-28', start: '09:00', end: '09:30', task: 'Outreach' },
 ];
 
 test('setup → 9 dates of entries → invoice → files → re-share', async ({ page }) => {
@@ -71,7 +38,7 @@ test('setup → 9 dates of entries → invoice → files → re-share', async ({
   await page.goto('./');
   await expect(heading(page, 'Set up')).toBeVisible();
   await expectAccessible(page, 'setup');
-  await setUp(page, { regen: true });
+  await setUp(page);
   await expectAccessible(page, 'home, empty');
 
   // A timed entry with counts and notes: Oct 30, 9:00–10:30.
@@ -81,7 +48,7 @@ test('setup → 9 dates of entries → invoice → files → re-share', async ({
   await page.clock.fastForward('01:30:00');
   await page.getByRole('button', { name: 'Stop' }).click();
   await expectAccessible(page, 'task step');
-  await pickTaskAndLine(page, 'Client check in', 'CHW referrals');
+  await pickTask(page, 'Client check in');
   await page.getByRole('button', { name: 'More contacts' }).click();
   await page.getByRole('button', { name: 'More contacts' }).click();
   await page.getByRole('button', { name: 'More referrals given' }).click();
@@ -92,18 +59,6 @@ test('setup → 9 dates of entries → invoice → files → re-share', async ({
 
   for (const entry of TYPED) await addEntry(page, entry);
   await expect(page.getByText('9 entries · 12 h · $240.00')).toBeVisible();
-
-  // One REGEN-GO entry stays off the TISUPP invoice.
-  await pickSource(page, 'REGEN-GO');
-  await addEntry(page, {
-    date: '2026-10-29',
-    start: '13:00',
-    end: '14:00',
-    task: 'Outreach',
-    line: 'Outreach and marketing',
-  });
-  await expect(page.getByText('1 entry · 1 h · $18.00')).toBeVisible();
-  await pickSource(page, 'TISUPP');
   await expectAccessible(page, 'home with entries');
 
   // Preview.
@@ -111,12 +66,9 @@ test('setup → 9 dates of entries → invoice → files → re-share', async ({
   await expect(heading(page, 'New invoice')).toBeVisible();
   await expect(page.getByText('CC-2026-001')).toBeVisible();
   await expect(page.getByText('9 on 9 dates (2 timesheet pages)')).toBeVisible();
+  // One budget line for everything (decision 0023).
   await expect(
-    page.getByRole('row', { name: 'New CHWs: training, stipends, field hours 2.00 h $40.00' }),
-  ).toBeVisible();
-  await expect(page.getByRole('row', { name: 'CHW referrals 7.00 h $140.00' })).toBeVisible();
-  await expect(
-    page.getByRole('row', { name: 'Outreach and marketing 3.00 h $60.00' }),
+    page.getByRole('row', { name: 'CHW experience hours 12.00 h $240.00' }),
   ).toBeVisible();
   await expect(page.getByRole('row', { name: 'Total 12.00 h $240.00' })).toBeVisible();
   await expectAccessible(page, 'invoice preview');
@@ -175,11 +127,9 @@ test('setup → 9 dates of entries → invoice → files → re-share', async ({
   expect([png.width, png.height]).toEqual([1700, 2200]);
   expect(png.qr).toContain(`"f":"${fingerprint}"`);
 
-  // Home: TISUPP is clear; REGEN-GO still waits.
+  // Home: nothing waits.
   await page.getByRole('button', { name: 'Done' }).click();
   await expect(page.getByText('No TISUPP entries waiting.', { exact: false })).toBeVisible();
-  await pickSource(page, 'REGEN-GO');
-  await expect(page.getByText('1 entry · 1 h · $18.00')).toBeVisible();
 
   // Settings, then re-share from Past invoices on Home: the same bytes (SPEC §6).
   await page.getByRole('button', { name: 'Settings' }).click();

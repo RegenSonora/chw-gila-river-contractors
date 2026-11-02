@@ -5,7 +5,7 @@ import { cpSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:f
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { expect, test, type Page } from '@playwright/test';
-import { expectAccessible, heading, pickTaskAndLine, setUp, ZONE } from './helpers.js';
+import { expectAccessible, heading, pickTask, setUp, ZONE } from './helpers.js';
 
 // A copy of dist/ on its own port per worker, so the test can publish a "new release" into it.
 const BASE_PORT = Number(process.env['E2E_PORT'] ?? 4173) + 1;
@@ -80,7 +80,7 @@ test('a new release is offered between entries and loads on tap', async ({ page 
   // Stop and save: back on Home, the offer appears.
   await page.clock.fastForward('30:00');
   await page.getByRole('button', { name: 'Stop' }).click();
-  await pickTaskAndLine(page, 'Client check in', 'CHW referrals');
+  await pickTask(page, 'Client check in');
   await expect(updateBar).toHaveCount(0);
   await page.getByRole('button', { name: 'Save entry' }).click();
   await expect(heading(page, 'CHW Gila River Contractors')).toBeVisible();

@@ -1,6 +1,6 @@
 // Setup → timer → entry → edit → delete/undo (BUILD_PLAN M3, SPEC §5).
 import { expect, test } from '@playwright/test';
-import { addEntry, heading, pickTaskAndLine, setUp, ZONE } from './helpers.js';
+import { addEntry, heading, pickTask, setUp, ZONE } from './helpers.js';
 
 test.use({ timezoneId: ZONE });
 
@@ -40,9 +40,11 @@ test('timer → task → counts → save, then undo', async ({ page }) => {
   // Next without picks: errors next to the fields.
   await page.getByRole('button', { name: 'Next' }).click();
   await expect(page.getByText('Pick what you did.')).toBeVisible();
-  await expect(page.getByText('Pick a budget line.')).toBeVisible();
+  // Decision 0023: one source and one budget line, so neither is asked.
+  await expect(page.getByText('Pick a budget line.')).toHaveCount(0);
+  await expect(page.getByRole('button', { name: /Choose$|Change$/ })).toHaveCount(0);
 
-  await pickTaskAndLine(page, 'Client check in', 'CHW referrals');
+  await pickTask(page, 'Client check in');
   await page.getByRole('button', { name: 'More contacts' }).click();
   await page.getByRole('button', { name: 'More referrals given' }).click();
   await page.getByRole('button', { name: '+ Add another count' }).click();
@@ -64,7 +66,7 @@ test('timer → task → counts → save, then undo', async ({ page }) => {
   await expect(page.getByText('No TISUPP entries waiting.', { exact: false })).toBeVisible();
 });
 
-test('the next entry starts on the last budget line with recent tasks first', async ({ page }) => {
+test('the next entry lists recent tasks first', async ({ page }) => {
   await setUp(page);
   await addEntry(page, {
     date: '2026-10-29',
@@ -77,36 +79,24 @@ test('the next entry starts on the last budget line with recent tasks first', as
   await page.getByLabel('Start').fill('09:00');
   await page.getByLabel('End').fill('10:00');
   await page.getByRole('button', { name: 'Next' }).click();
-  await expect(page.getByRole('button', { name: 'CHW referrals Change' })).toBeVisible();
   await expect(page.getByText('Recent')).toBeVisible();
   await expect(page.getByRole('radio').first()).toHaveAccessibleName(/^Client follow up/);
 });
 
-test('edit an entry, move it to another source, delete and undo', async ({ page }) => {
-  await setUp(page, { regen: true });
+test('edit an entry, delete and undo', async ({ page }) => {
+  await setUp(page);
   await addEntry(page, { date: '2026-10-30', start: '09:12', end: '10:37' });
+  await expect(page.getByText('9:12–10:37 AM · CHW experience hours')).toBeVisible();
 
   await page.getByRole('button', { name: /Client check in/ }).click();
   await expect(heading(page, 'Edit entry')).toBeVisible();
-  await page.getByRole('button', { name: 'CHW referrals Change' }).click();
-  await page.getByRole('dialog').getByRole('button', { name: 'Outreach and marketing' }).click();
+  // Decision 0023: no source or budget line rows to change.
+  await expect(
+    page.getByRole('button', { name: /^(TISUPP|CHW experience hours) Change$/ }),
+  ).toHaveCount(0);
+  await page.getByLabel('Notes (optional)').fill('Edited');
   await page.getByRole('button', { name: 'Save changes' }).click();
   await expect(page.getByRole('status')).toContainText('Saved: 1.5 h, Client check in');
-  await expect(page.getByText('9:12–10:37 AM · Outreach and marketing')).toBeVisible();
-
-  // Decision 0008: move to Regen General Operating; picks it also has carry over.
-  await page.getByRole('button', { name: /Client check in/ }).click();
-  await page.getByRole('button', { name: 'TISUPP Change' }).click();
-  await page
-    .getByRole('dialog')
-    .getByRole('button', { name: /^REGEN-GO/ })
-    .click();
-  await page.getByRole('button', { name: 'Save changes' }).click();
-  await expect(page.getByRole('status')).toContainText('Moved to REGEN-GO');
-  await expect(page.getByRole('button', { name: /Funding source REGEN-GO/ })).toBeVisible();
-  await expect(page.getByText('1 entry · 1.5 h · $27.00')).toBeVisible();
-  await page.getByRole('button', { name: 'Undo' }).click();
-  await expect(page.getByRole('button', { name: /Funding source TISUPP/ })).toBeVisible();
   await expect(page.getByText('1 entry · 1.5 h · $30.00')).toBeVisible();
 
   await page.getByRole('button', { name: /Client check in/ }).click();
