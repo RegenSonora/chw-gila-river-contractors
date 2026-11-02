@@ -1,6 +1,6 @@
 # 0012 — Where past invoices are
 
-- **Status:** Accepted by Chris, November 1, 2026
+- **Status:** Accepted by Chris, November 1, 2026. The row moved from Settings to Home in decision 0019.
 - **Spec:** SPEC §6, §9; decision 0007
 
 ## Decision

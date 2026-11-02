@@ -62,7 +62,7 @@ Each funding source is a JSON file in the repo, validated against a JSON Schema 
 | 13 | Client check in | Interpersonal & Relationship-Building |
 | 14 | Client follow up | Service Coordination & Navigation |
 | 15 | Re-screening | Individual & Community Assessment |
-| 16 | Planning and conducting surveys | Individual & Community Assessment |
+| 16 | Individual and community assessment | Individual & Community Assessment |
 | 17 | Documentation | Professional Skills & Conduct |
 | 18 | Data analysis and reporting | Evaluation & Research Skills |
 | 19 | Developing tools/processes | Professional Skills & Conduct |
@@ -218,7 +218,7 @@ Guardrails, written in a one-page procedure (`docs/signing-procedure.md`, CC BY 
 
 ## 9. Screens
 
-Install gate (iPhone) · Setup · Home · Timer running · New entry: task and budget line · New entry: counts and notes · Enter times · Invoice preview · Invoice created (share) · Settings · Rate change check · plus edit entry and "show all entries" (not drawn). See the wireframes.
+Install gate (iPhone) · Setup · Home · Timer running · What did you do? (task and budget line) · Counts and notes · Enter times · Invoice preview · Invoice created (share) · Settings · Rate change check · plus edit entry and "show all entries" (not drawn). See the wireframes.
 
 ## 10. Field usability and quality
 
