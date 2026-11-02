@@ -38,7 +38,7 @@ Then fill in setup: your name, initials, mailing address, and the hourly rate fr
 2. Tap **Share files** and email the four files to yourself.
 3. Sign the PDF, or the picture (PNG) of the invoice page in your photo app. Sign one, not both. Email the signed file with both CSV files to your reviewer.
 
-The full steps, with how to sign on iPhone and Android: [docs/signing-procedure.md](docs/signing-procedure.md). Need the files again? **Settings › Past invoices**.
+The full steps, with how to sign on iPhone and Android: [docs/signing-procedure.md](docs/signing-procedure.md). Need the files again? **Past invoices** on Home.
 
 ### Don't lose your hours
 

@@ -84,7 +84,6 @@ for (const colorScheme of ['light', 'dark'] as const) {
       await expect(page.getByRole('dialog')).toBeVisible();
       await expectAccessible(page, 'share first dialog');
       await page.getByRole('dialog').getByRole('button', { name: 'Done anyway' }).click();
-      await page.getByRole('button', { name: 'Settings' }).click();
       await page.getByRole('button', { name: /Past invoices/ }).click();
       await expect(heading(page, 'Past invoices')).toBeVisible();
       await expectAccessible(page, 'past invoices');

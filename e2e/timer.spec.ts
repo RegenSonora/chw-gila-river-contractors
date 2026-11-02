@@ -76,5 +76,5 @@ test('a timer that overlaps an entry goes to Enter times to fix it', async ({ pa
   await expect(page.getByRole('alert')).toContainText('This overlaps your 10:15–10:30 AM entry');
   await page.getByLabel('End').fill('10:15');
   await page.getByRole('button', { name: 'Next' }).click();
-  await expect(heading(page, 'New entry')).toBeVisible();
+  await expect(heading(page, 'What did you do?')).toBeVisible();
 });

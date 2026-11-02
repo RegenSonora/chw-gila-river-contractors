@@ -53,7 +53,7 @@ Mark each step ✅ or ❌. Any ❌ blocks the release until fixed or accepted by
 - [ ] Open the PDF from the email: invoice page, then timesheet pages; text is sharp; the QR code is visible.
 - [ ] Open the picture (PNG) from the email: it looks like PDF page 1; text is sharp.
 - [ ] Open each CSV in a spreadsheet app: one header row, no broken columns.
-- [ ] Settings › **Past invoices** › tap the invoice › **Share files** again. The share sheet has the same four files.
+- [ ] On Home, **Past invoices** › tap the invoice › **Share files** again. The share sheet has the same four files.
 
 ## 6. Signing
 

@@ -138,7 +138,7 @@ export function SourceAndLine({
   );
 }
 
-/** "What did you do?": recent tasks first, then the rest, as one radio group. */
+/** The task list ("Task"): recent tasks first, then the rest, as one radio group. */
 export function TaskList({
   draft,
   error,
@@ -176,7 +176,7 @@ export function TaskList({
   );
   return (
     <fieldset class="tasks" aria-invalid={error ? 'true' : undefined}>
-      <legend class="lab">What did you do?</legend>
+      <legend class="lab">Task</legend>
       {error && <ErrorText>{error}</ErrorText>}
       <div class="task-box">
         {recent.length > 0 && <p class="grp">Recent</p>}

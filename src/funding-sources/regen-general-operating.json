@@ -3,7 +3,7 @@
   "id": "regen-general-operating",
   "code": "REGEN-GO",
   "name": "Regen General Operating",
-  "version": 1,
+  "version": 2,
   "has_nte": false,
   "default_rate_cents": null,
   "certification_text": "I certify that the services listed were performed on the dates shown on the attached timesheet pages, the hours are accurate, and no participant names are included.",
@@ -85,7 +85,7 @@
     },
     {
       "id": "planning-and-conducting-surveys",
-      "name": "Planning and conducting surveys",
+      "name": "Individual and community assessment",
       "core_competency": "Individual & Community Assessment"
     },
     {

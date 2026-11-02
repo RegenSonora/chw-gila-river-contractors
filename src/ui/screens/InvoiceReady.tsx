@@ -64,7 +64,7 @@ export function InvoiceReady() {
       created && !shared
         ? () => ({
             title: 'Leave without sharing?',
-            body: 'You can share the files later from Settings › Past invoices.',
+            body: 'You can share the files later from Past invoices on Home.',
             confirm: 'Leave without sharing',
             cancel: 'Stay',
           })
@@ -149,7 +149,7 @@ export function InvoiceReady() {
       {asking && (
         <Confirm
           title="Share the files first?"
-          body={<p>You can share them later from Settings › Past invoices.</p>}
+          body={<p>You can share them later from Past invoices on Home.</p>}
           confirm="Share files"
           second={{
             label: 'Done anyway',

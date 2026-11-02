@@ -83,9 +83,8 @@ test('create, share and re-share an invoice', async ({ page }) => {
   await expect(page.getByText('No TISUPP entries waiting.', { exact: false })).toBeVisible();
   await expect(page.getByRole('button', { name: 'Generate TISUPP invoice' })).toHaveCount(0);
 
-  // Re-share from Settings › Past invoices: the same bytes (SPEC §6).
-  await page.getByRole('button', { name: 'Settings' }).click();
-  await page.getByRole('button', { name: /Past invoices/ }).click();
+  // Re-share from Past invoices on Home: the same bytes (SPEC §6, decision 0019).
+  await page.getByRole('button', { name: /Past invoices 1 invoice/ }).click();
   await expect(heading(page, 'Past invoices')).toBeVisible();
   await page.getByRole('button', { name: new RegExp(number) }).click();
   await expect(heading(page, `Invoice ${number}`)).toBeVisible();
@@ -98,7 +97,7 @@ test('create, share and re-share an invoice', async ({ page }) => {
 
   // The next invoice takes the next number.
   await page.getByRole('button', { name: 'Back' }).click();
-  await page.getByRole('button', { name: 'Back' }).click();
+  await expect(heading(page, 'CHW Time Tracker')).toBeVisible();
   await addEntry(page, { date: '2026-10-31', start: '09:00', end: '10:00' });
   await page.getByRole('button', { name: 'Generate TISUPP invoice' }).click();
   await expect(page.getByText(/^CC-\d{4}-002$/)).toBeVisible();
@@ -122,7 +121,7 @@ test('without file sharing, the files download; leaving unshared asks first', as
   // So does Done; sharing from the question downloads the four files.
   await page.getByRole('button', { name: 'Done' }).click();
   const ask = page.getByRole('dialog', { name: 'Share the files first?' });
-  await expect(ask).toContainText('You can share them later from Settings › Past invoices.');
+  await expect(ask).toContainText('You can share them later from Past invoices on Home.');
   const downloads: string[] = [];
   page.on('download', (d) => downloads.push(d.suggestedFilename()));
   await ask.getByRole('button', { name: 'Share files' }).click();
@@ -148,6 +147,7 @@ test('Done anyway leaves an unshared invoice; it stays in Past invoices', async 
   await page.getByRole('button', { name: 'Done' }).click();
   await page.getByRole('dialog').getByRole('button', { name: 'Done anyway' }).click();
   await expect(heading(page, 'CHW Time Tracker')).toBeVisible();
-  await page.getByRole('button', { name: 'Settings' }).click();
   await expect(page.getByRole('button', { name: /Past invoices 1 invoice/ })).toBeVisible();
+  await page.getByRole('button', { name: 'Settings' }).click();
+  await expect(page.getByRole('button', { name: /Past invoices/ })).toHaveCount(0);
 });

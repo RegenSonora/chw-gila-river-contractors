@@ -32,6 +32,18 @@ describe('funding source files', () => {
     expect(checkFundingSources(root)).toEqual([]);
   });
 
+  it('rename the survey task, keeping its id, at version 2 (decision 0019)', () => {
+    for (const source of [tisupp, readSource('regen-general-operating')]) {
+      expect(source['version']).toBe(2);
+      expect(source.tasks.find((t) => t['id'] === 'planning-and-conducting-surveys')).toMatchObject(
+        {
+          name: 'Individual and community assessment',
+          core_competency: 'Individual & Community Assessment',
+        },
+      );
+    }
+  });
+
   it('TISUPP has 21 tasks, 12 budget lines, an NTE and a $20.00 default rate (SPEC §3, §4)', () => {
     expect(tisupp['code']).toBe('TISUPP');
     expect(tisupp.tasks).toHaveLength(21);

@@ -1247,6 +1247,10 @@ p {
   cursor: pointer;
 }
 
+.home-invoices {
+  margin-top: 24px;
+}
+
 .nav-row-detail {
   font-size: 15px;
   font-weight: 400;
