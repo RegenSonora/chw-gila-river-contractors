@@ -181,10 +181,12 @@ test('setup → 9 dates of entries → invoice → files → re-share', async ({
   await pickSource(page, 'REGEN-GO');
   await expect(page.getByText('1 entry · 1 h · $18.00')).toBeVisible();
 
-  // Re-share from Settings › Past invoices: the same bytes (SPEC §6).
+  // Settings, then re-share from Past invoices on Home: the same bytes (SPEC §6).
   await page.getByRole('button', { name: 'Settings' }).click();
   await expectAccessible(page, 'settings');
-  await page.getByRole('button', { name: /Past invoices/ }).click();
+  await page.getByRole('button', { name: 'Back' }).click();
+  await expectAccessible(page, 'home with past invoices');
+  await page.getByRole('button', { name: /Past invoices 1 invoice/ }).click();
   await expect(heading(page, 'Past invoices')).toBeVisible();
   await expectAccessible(page, 'past invoices');
   await page.getByRole('button', { name: /CC-2026-001/ }).click();

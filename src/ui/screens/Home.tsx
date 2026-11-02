@@ -1,4 +1,5 @@
-// Home (SPEC §5, §6): source chip, "Not yet invoiced", Generate, Start, Enter times.
+// Home (SPEC §5, §6): source chip, "Not yet invoiced", Past invoices, Generate, Start, Enter
+// times.
 import { useState } from 'preact/hooks';
 import { formatDollars, uninvoicedEntries, uninvoicedSummary } from '../../core';
 import { EntryRow, Page, SettingsIcon, SourceChip, ToastBar, ListPicker } from '../components';
@@ -135,6 +136,22 @@ export function Home() {
           Show all {plural(open.length, 'entry', 'entries')}
         </button>
       )}
+      {/* Decision 0019: Past invoices lives on Home, under the list. */}
+      <button
+        type="button"
+        class="card nav-row home-invoices"
+        onClick={() => {
+          actions.dismissToast();
+          actions.push('invoices');
+        }}
+      >
+        <span>Past invoices</span>
+        <span class="nav-row-detail">
+          {data.invoices.length > 0
+            ? plural(data.invoices.length, 'invoice', 'invoices')
+            : 'None yet'}
+        </span>
+      </button>
       <ToastBar />
       {picking && (
         <SourcePickerSheet

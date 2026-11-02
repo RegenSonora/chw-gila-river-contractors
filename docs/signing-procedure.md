@@ -21,7 +21,7 @@ _For CHWs and reviewers at Regenerating Sonora, Inc. The app does not sign anyth
 - **Sign one file.** Either the PDF or the picture, never both. The picture has the same fingerprint and QR code as the PDF.
 - **Never edit a signed file.** If something is wrong, don't change the PDF or the CSV files. Tell your reviewer, and make the correction as a new invoice from the app.
 - **The office keeps the final PDF with its email thread.** The email thread shows who signed and when.
-- **Need the files again?** In the app, open **Settings › Past invoices**, tap the invoice and share it again. The files are the same as the first time.
+- **Need the files again?** In the app, open **Past invoices** on Home, tap the invoice and share it again. The files are the same as the first time.
 
 ## Don't lose your hours
 
