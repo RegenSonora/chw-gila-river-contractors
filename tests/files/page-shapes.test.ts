@@ -4,7 +4,7 @@ import { textWidth } from '../../src/files/pdf/fonts';
 import { qrMatrix } from '../../src/files/qr/matrix';
 import { qrPayloadV1 } from '../../src/files/qr/payload';
 import { tisupp } from '../core/fixtures/wireframe-sample';
-import { sampleInvoice } from './helpers';
+import { invoiceFrom, sampleInvoice } from './helpers';
 
 async function sha256(bytes: Uint8Array<ArrayBuffer>): Promise<string> {
   const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', bytes));
@@ -58,7 +58,9 @@ describe('page 1 as shapes, for the picture (decision 0018)', () => {
   });
 
   it('leaves the PDF and CSV bytes as they were', async () => {
-    const files = buildInvoiceFiles(await sampleInvoice(), tisupp);
+    // Pinned at TISUPP version 1, so a later edit to the source file doesn't move the hashes.
+    const invoice = await invoiceFrom({ source: { ...tisupp, version: 1 } });
+    const files = buildInvoiceFiles(invoice, tisupp);
     expect(await Promise.all(files.map((f) => sha256(f.bytes)))).toEqual([
       '70abc2b72e5d12c387478c3d417408b57844659bd78cd52bfe045a30a1fb4863',
       '6efa866b91e9dac673a6b7bd66a471fe4707dd382ac95e50807737418a710ad4',
