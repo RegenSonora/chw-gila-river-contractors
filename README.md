@@ -27,7 +27,7 @@ Then fill in setup: your name, initials, mailing address, and the hourly rate fr
 ### Every day
 
 - Tap **Start timer** when you begin and **Stop** when you finish. The timer keeps running if you close the app.
-- Forgot the timer? Tap **Hand enter time** and type the date, start and end.
+- Forgot the timer? Tap **Record time** and type the date, start and end.
 - Pick what you did, add counts and notes if you like, then **Save**. Every entry is TISUPP, CHW experience hours (decision 0023). Notes appear on the timesheet: **don't include client names.**
 - Tap an entry on Home to fix or delete it, until it is invoiced.
 - At 240 hours, Home reminds you to generate your invoice and then change your rate to $23.00 in **Settings**.

@@ -146,7 +146,7 @@ test('setup → 9 dates of entries → invoice → files → re-share', async ({
 
   // Home: nothing waits.
   await page.getByRole('button', { name: 'Done' }).click();
-  await expect(page.getByText('Start timer and start working or hand enter times.')).toBeVisible();
+  await expect(page.getByText('Start timer and start working or record time.')).toBeVisible();
 
   // Settings, then re-share from Past invoices on Home: the same bytes (SPEC §6).
   await page.getByRole('button', { name: 'Settings' }).click();

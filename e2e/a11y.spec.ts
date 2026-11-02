@@ -19,7 +19,7 @@ for (const colorScheme of ['light', 'dark'] as const) {
       await expectAccessible(page, 'home, empty');
       // No source picker: one source has no chip (decision 0023).
 
-      await page.getByRole('button', { name: 'Hand enter time' }).click();
+      await page.getByRole('button', { name: 'Record time' }).click();
       await page.getByLabel('Date').fill('2026-10-30');
       await page.getByLabel('Start').fill('09:12');
       await page.getByLabel('End').fill('10:37');
