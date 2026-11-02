@@ -23,6 +23,51 @@ export interface StrokeStyle {
   dash?: number;
 }
 
+/**
+ * What was drawn, in page points (top-left origin), so page 1 can also be painted as a picture
+ * (decision 0018). Text carries its left edge and its Helvetica width.
+ */
+export type Shape =
+  | {
+      kind: 'text';
+      x: number;
+      y: number;
+      text: string;
+      font: FontName;
+      size: number;
+      gray: Gray;
+      width: number;
+    }
+  | {
+      kind: 'line';
+      x1: number;
+      y1: number;
+      x2: number;
+      y2: number;
+      width: number;
+      gray: Gray;
+      dash?: number;
+    }
+  | {
+      kind: 'rect';
+      x: number;
+      y: number;
+      w: number;
+      h: number;
+      width: number;
+      gray: Gray;
+      dash?: number;
+      fill?: Gray;
+      stroke: boolean;
+    }
+  | {
+      kind: 'modules';
+      x: number;
+      y: number;
+      cell: number;
+      matrix: readonly (readonly boolean[])[];
+    };
+
 const FONT_RESOURCE: Record<FontName, string> = { regular: 'F1', bold: 'F2' };
 
 /** A number for a content stream: at most 3 decimals, no exponent, no "-0". */
@@ -46,9 +91,18 @@ function infoString(text: string): string {
   return hex(codes);
 }
 
+function strokeOf(style: StrokeStyle): { width: number; gray: Gray; dash?: number } {
+  return {
+    width: style.width ?? 1,
+    gray: style.gray ?? 0,
+    ...(style.dash && { dash: style.dash }),
+  };
+}
+
 /** One page. Coordinates are in points from the top-left corner; y grows downward. */
 export class PdfPage {
   readonly ops: string[] = [];
+  readonly shapes: Shape[] = [];
 
   constructor(
     readonly width: number,
@@ -59,7 +113,10 @@ export class PdfPage {
   text(x: number, y: number, text: string, style: TextStyle): void {
     if (!text) return;
     const font = style.font ?? 'regular';
-    const left = style.align === 'right' ? x - textWidth(text, font, style.size) : x;
+    const width = textWidth(text, font, style.size);
+    const left = style.align === 'right' ? x - width : x;
+    const gray = style.gray ?? 0;
+    this.shapes.push({ kind: 'text', x: left, y, text, font, size: style.size, gray, width });
     this.ops.push(
       `BT /${FONT_RESOURCE[font]} ${num(style.size)} Tf ${num(style.gray ?? 0)} g ` +
         `${num(left)} ${num(this.height - y)} Td ${hex(toWinAnsi(text))} Tj ET`,
@@ -67,6 +124,7 @@ export class PdfPage {
   }
 
   line(x1: number, y1: number, x2: number, y2: number, style: StrokeStyle = {}): void {
+    this.shapes.push({ kind: 'line', x1, y1, x2, y2, ...strokeOf(style) });
     this.ops.push(
       `${this.strokeState(style)} ${num(x1)} ${num(this.height - y1)} m ` +
         `${num(x2)} ${num(this.height - y2)} l S Q`,
@@ -84,6 +142,16 @@ export class PdfPage {
     const box = `${num(x)} ${num(this.height - y - h)} ${num(w)} ${num(h)} re`;
     const fill = style.fill;
     const stroke = style.stroke ?? fill === undefined;
+    this.shapes.push({
+      kind: 'rect',
+      x,
+      y,
+      w,
+      h,
+      ...strokeOf(style),
+      ...(fill !== undefined && { fill }),
+      stroke,
+    });
     const paint = fill !== undefined && stroke ? 'B' : fill !== undefined ? 'f' : 'S';
     const fillOp = fill !== undefined ? `${num(fill)} g ` : '';
     this.ops.push(`${this.strokeState(style)} ${fillOp}${box} ${paint} Q`);
@@ -91,6 +159,7 @@ export class PdfPage {
 
   /** Dark modules as filled squares, merged into runs per row. Top-left at (x, y). */
   modules(x: number, y: number, cell: number, matrix: readonly (readonly boolean[])[]): void {
+    this.shapes.push({ kind: 'modules', x, y, cell, matrix });
     const boxes: string[] = [];
     matrix.forEach((row, r) => {
       let c = 0;

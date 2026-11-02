@@ -5,17 +5,20 @@ _For CHWs and reviewers at Regenerating Sonora, Inc. The app does not sign anyth
 ## Steps
 
 1. **Create the invoice in the app.** On Home, tap **Generate … invoice**, check the preview, then tap **Create invoice files**.
-2. **Share the files to yourself.** Tap **Share files** and email all three files to yourself: the invoice PDF, the timesheet CSV and the entry log CSV.
-3. **Sign the PDF.**
-   - **iPhone:** open the PDF from your email, tap the **Markup** button (pen icon), add your signature on the CHW line, tap **Done**.
-   - **Android:** open the PDF in **Adobe Acrobat Reader**, tap **Fill & Sign**, add your signature on the CHW line, save.
-4. **Email the signed PDF and both CSV files to your reviewer.** Send all three in one email.
-5. **The reviewer signs "Services received"** on the PDF the same way and emails the signed PDF and both CSV files to the office. Usually the reviewer is the CHW Team Lead. When the Team Lead is the CHW, someone else signs, as the office decides.
+2. **Share the files to yourself.** Tap **Share files** and email all four files to yourself: the invoice PDF, a picture (PNG) of the invoice page, the timesheet CSV and the entry log CSV. On iPhone Mail, choose **Actual Size** if it asks about image size.
+3. **Sign the PDF, or sign the picture.** Sign one of them, not both.
+   - **PDF on iPhone:** open the PDF from your email, tap the **Markup** button (pen icon), add your signature in the CHW box, tap **Done**.
+   - **PDF on Android:** open the PDF in **Adobe Acrobat Reader**, tap **Fill & Sign**, add your signature in the CHW box, save.
+   - **Picture on iPhone:** save the picture to Photos, open it, tap **Edit**, then **Markup** (pen icon), sign in the CHW box, tap **Done**.
+   - **Picture on Android:** open the picture in **Google Photos** (or your gallery app), tap **Edit**, then **Markup**, sign in the CHW box, save a copy.
+4. **Email the signed file and both CSV files to your reviewer.** Send all three in one email. A signed picture goes at **Actual Size**.
+5. **The reviewer signs "Services received"** on the same file the same way and emails it with both CSV files to the office. Usually the reviewer is the CHW Team Lead. When the Team Lead is the CHW, someone else signs, as the office decides.
 6. **The office signs its lines on paper.**
 
 ## Rules
 
 - **Email only.** Send invoices by email, not by text message, chat apps or shared folders.
+- **Sign one file.** Either the PDF or the picture, never both. The picture has the same fingerprint and QR code as the PDF.
 - **Never edit a signed file.** If something is wrong, don't change the PDF or the CSV files. Tell your reviewer, and make the correction as a new invoice from the app.
 - **The office keeps the final PDF with its email thread.** The email thread shows who signed and when.
 - **Need the files again?** In the app, open **Settings › Past invoices**, tap the invoice and share it again. The files are the same as the first time.

@@ -1,12 +1,13 @@
-// Invoice created (SPEC §6–§8, wireframe Share): the three files, Share, and the signing steps.
+// Invoice created (SPEC §6–§8, wireframe Share): the four files, Share, and the signing steps.
 // The same screen re-shares a past invoice, re-creating its files from stored data.
 import { useLayoutEffect, useMemo, useState } from 'preact/hooks';
 import { formatDollars, paginateTimesheet, shortFingerprint } from '../../core';
-import { buildInvoiceFiles } from '../../files';
+import { buildInvoiceFiles, invoicePageShapes, pngName, type InvoiceFile } from '../../files';
 import { dateRange } from '../../files/text';
 import { findFundingSource } from '../../funding-sources';
 import { CheckIcon, Confirm, Page } from '../components';
 import { plural } from '../format';
+import { pagePng } from '../page-image';
 import { shareFiles, toFiles, type ShareOutcome } from '../share';
 import { useApp } from '../store';
 
@@ -28,10 +29,32 @@ export function InvoiceReady() {
   const files = useMemo(() => {
     if (!invoice) return null;
     const source = findFundingSource(invoice.source.id) ?? { tasks: [], budget_lines: [] };
-    return {
-      list: buildInvoiceFiles(invoice, source),
-      pages: paginateTimesheet(invoice, source).length,
-    };
+    const pages = paginateTimesheet(invoice, source).length;
+    const [pdf, timesheet, entries] = buildInvoiceFiles(invoice, source);
+    const png = pagePng(invoicePageShapes(invoice, source));
+    const list: { file: InvoiceFile; tag: string; detail: string }[] = [];
+    if (pdf) {
+      list.push({
+        file: pdf,
+        tag: 'PDF',
+        detail: `Invoice + ${plural(pages, 'timesheet page', 'timesheet pages')}. Sign this or the picture.`,
+      });
+    }
+    // The picture of page 1, for signing in a photo app (decision 0018).
+    if (png) {
+      list.push({
+        file: { name: pngName(invoice), type: 'image/png', bytes: png },
+        tag: 'PNG',
+        detail: 'Picture of the invoice page, for signing in a photo app',
+      });
+    }
+    if (timesheet) {
+      list.push({ file: timesheet, tag: 'CSV', detail: 'Timesheet table, 7 dates per page' });
+    }
+    if (entries) {
+      list.push({ file: entries, tag: 'CSV', detail: 'Every entry with start and stop times' });
+    }
+    return list;
   }, [invoice]);
 
   // A new invoice's files must leave the phone: ask before the back gesture leaves unshared.
@@ -56,19 +79,13 @@ export function InvoiceReady() {
 
   const share = async () => {
     setAsking(false);
-    setOutcome(await shareFiles(toFiles(files.list), `Invoice ${invoice.number}`));
+    setOutcome(await shareFiles(toFiles(files.map((f) => f.file)), `Invoice ${invoice.number}`));
   };
 
   const done = () => {
     if (created && !shared) setAsking(true);
     else actions.home();
   };
-
-  const describe = [
-    `Invoice + ${plural(files.pages, 'timesheet page', 'timesheet pages')}. This is the one you sign.`,
-    'Timesheet table, 7 dates per page',
-    'Every entry with start and stop times',
-  ];
 
   return (
     <Page
@@ -100,14 +117,14 @@ export function InvoiceReady() {
       </div>
 
       <ul class="card files" aria-label="Invoice files">
-        {files.list.map((f, i) => (
-          <li key={f.name} class="file">
+        {files.map(({ file, tag, detail }) => (
+          <li key={file.name} class="file">
             <span class="file-tag" aria-hidden="true">
-              {f.type === 'application/pdf' ? 'PDF' : 'CSV'}
+              {tag}
             </span>
             <span class="file-text">
-              <span class="file-name">{f.name}</span>
-              <span class="file-detail">{describe[i]}</span>
+              <span class="file-name">{file.name}</span>
+              <span class="file-detail">{detail}</span>
             </span>
           </li>
         ))}
@@ -116,8 +133,11 @@ export function InvoiceReady() {
       <h2 class="sec">Next steps</h2>
       <ol class="next-steps">
         <li>Share the files and email them to yourself.</li>
-        <li>Sign the PDF: Markup on iPhone, or Adobe Acrobat Fill &amp; Sign on Android.</li>
-        <li>Email the signed PDF and both CSV files to your reviewer.</li>
+        <li>
+          Sign the PDF (Markup on iPhone, or Adobe Acrobat Fill &amp; Sign on Android), or sign the
+          picture in your photo app. Sign one, not both.
+        </li>
+        <li>Email the signed file and both CSV files to your reviewer.</li>
         <li>Your reviewer signs and sends everything to the office.</li>
       </ol>
       <p class="hint">Fingerprint {shortFingerprint(invoice.fingerprint)}</p>

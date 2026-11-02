@@ -331,6 +331,7 @@ export function drawInvoicePage(
     const spare = Math.min(footerTopAt(k), qrTop) - bottom;
     if (spare >= 0 || k === SCALES[SCALES.length - 1]) {
       page.ops.push(...trial.ops);
+      page.shapes.push(...trial.shapes);
       return { scale: k, spare };
     }
   }

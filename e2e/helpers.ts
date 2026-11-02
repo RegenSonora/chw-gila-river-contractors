@@ -1,6 +1,10 @@
 // Shared steps for the e2e tests: a fresh phone, setup, entries and axe checks.
 import AxeBuilder from '@axe-core/playwright';
 import { expect, type Page } from '@playwright/test';
+import jsqr from 'jsqr';
+
+// jsqr is CommonJS: under NodeNext its default export arrives as .default.
+const jsQR = ((jsqr as unknown as { default?: unknown }).default ?? jsqr) as typeof jsqr.default;
 
 /** Arizona: no daylight saving, so labels are stable (CLAUDE.md data conventions). */
 export const ZONE = 'America/Phoenix';
@@ -119,6 +123,39 @@ export async function noShare(page: Page): Promise<void> {
 /** Every share so far, oldest first. */
 export const sharedFiles = (page: Page) =>
   page.evaluate(() => (window as unknown as { __shared: SharedFile[][] }).__shared);
+
+/**
+ * Open a shared PNG in the browser, as a photo app would: its size, and the QR code read from
+ * the bottom-right corner of the page (decision 0018).
+ */
+export async function readPng(
+  page: Page,
+  bytes: readonly number[],
+): Promise<{ width: number; height: number; qr: string | null }> {
+  const crop = 700;
+  const seen = await page.evaluate(
+    async ({ bytes, crop }) => {
+      const image = await createImageBitmap(
+        new Blob([new Uint8Array(bytes)], { type: 'image/png' }),
+      );
+      const canvas = document.createElement('canvas');
+      canvas.width = crop;
+      canvas.height = crop;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) throw new Error('no canvas');
+      ctx.drawImage(image, crop - image.width, crop - image.height);
+      const rgba = ctx.getImageData(0, 0, crop, crop).data;
+      let binary = '';
+      for (let i = 0; i < rgba.length; i += 0x8000) {
+        binary += String.fromCharCode(...rgba.subarray(i, i + 0x8000));
+      }
+      return { width: image.width, height: image.height, rgba: btoa(binary) };
+    },
+    { bytes: [...bytes], crop },
+  );
+  const rgba = new Uint8ClampedArray(Buffer.from(seen.rgba, 'base64'));
+  return { width: seen.width, height: seen.height, qr: jsQR(rgba, crop, crop)?.data ?? null };
+}
 
 // --- CSV ----------------------------------------------------------------------------------
 

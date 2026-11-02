@@ -47,12 +47,13 @@ Mark each step ✅ or ❌. Any ❌ blocks the release until fixed or accepted by
 
 - [ ] Have at least 8 entries on 8+ different dates (use Enter times with past dates).
 - [ ] Tap **Generate … invoice**. The preview shows the right hours, rate and total.
-- [ ] Tap **Create invoice files**. "Invoice created" shows the three file names.
-- [ ] Tap **Share files**. The phone's share sheet opens with **all three files**: the PDF and both CSVs.
-- [ ] Share to Mail (iPhone) or Gmail (Android) and send to yourself. The email arrives with all three attachments, with the right names.
+- [ ] Tap **Create invoice files**. "Invoice created" shows the four file names.
+- [ ] Tap **Share files**. The phone's share sheet opens with **all four files**: the PDF, the picture (PNG) and both CSVs.
+- [ ] Share to Mail (iPhone) or Gmail (Android) and send to yourself. On iPhone Mail, choose **Actual Size** if asked. The email arrives with all four attachments, with the right names.
 - [ ] Open the PDF from the email: invoice page, then timesheet pages; text is sharp; the QR code is visible.
+- [ ] Open the picture (PNG) from the email: it looks like PDF page 1; text is sharp.
 - [ ] Open each CSV in a spreadsheet app: one header row, no broken columns.
-- [ ] Settings › **Past invoices** › tap the invoice › **Share files** again. The share sheet has the same three files.
+- [ ] Settings › **Past invoices** › tap the invoice › **Share files** again. The share sheet has the same four files.
 
 ## 6. Signing
 
@@ -61,6 +62,8 @@ Mark each step ✅ or ❌. Any ❌ blocks the release until fixed or accepted by
 | 6.1 | Open the PDF from Mail. Tap **Markup**, add a signature on the CHW line, tap **Done**. | Open the PDF in **Adobe Acrobat Reader**. **Fill & Sign**, add a signature on the CHW line, save. |
 | 6.2 | Forward the signed PDF and both CSVs to a second address. | Same. |
 | 6.3 | Open the signed PDF on a computer: the signature is there and the text is still selectable. | Same. |
+| 6.4 | Save the picture (PNG) to Photos, **Edit › Markup**, sign the CHW box, **Done**. | Open the picture in **Google Photos** (or the gallery app), **Edit › Markup**, sign the CHW box, save. |
+| 6.5 | Email the signed picture with both CSVs, **Actual Size**. On a computer, the signature is there and a phone camera still reads the QR code. | Same. |
 
 ## 7. Update flow
 
