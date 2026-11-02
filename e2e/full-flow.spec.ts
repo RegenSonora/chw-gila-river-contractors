@@ -9,6 +9,7 @@ import {
   parseCsv,
   pickTaskAndLine,
   setUp,
+  readPng,
   sharedFiles,
   stubShare,
   ZONE,
@@ -130,10 +131,11 @@ test('setup → 9 dates of entries → invoice → files → re-share', async ({
   const [first] = await sharedFiles(page);
   expect(first?.map((f) => f.name)).toEqual([
     'TISUPP_CC-2026-001_2026-10-19_to_2026-10-30.pdf',
+    'TISUPP_CC-2026-001_invoice.png',
     'TISUPP_CC-2026-001_timesheet.csv',
     'TISUPP_CC-2026-001_entries.csv',
   ]);
-  const [pdfFile, timesheetFile, entriesFile] = first ?? [];
+  const [pdfFile, pngFile, timesheetFile, entriesFile] = first ?? [];
 
   // Entry log CSV: one row per TISUPP entry, all sharing one fingerprint.
   const [header = [], ...rows] = parseCsv(entriesFile?.bytes ?? []);
@@ -167,6 +169,11 @@ test('setup → 9 dates of entries → invoice → files → re-share', async ({
   );
   expect(pdf[1]?.text).toContain('Dates worked 1–7 of 9');
   expect(pdf[2]?.text).toContain('Dates worked 8–9 of 9');
+
+  // Picture of page 1 (decision 0018): its QR code carries the same fingerprint.
+  const png = await readPng(page, pngFile?.bytes ?? []);
+  expect([png.width, png.height]).toEqual([1700, 2200]);
+  expect(png.qr).toContain(`"f":"${fingerprint}"`);
 
   // Home: TISUPP is clear; REGEN-GO still waits.
   await page.getByRole('button', { name: 'Done' }).click();
