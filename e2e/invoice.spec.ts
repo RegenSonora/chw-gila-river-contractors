@@ -35,11 +35,11 @@ test('create, share and re-share an invoice', async ({ page }) => {
   await expect(heading(page, 'New invoice')).toBeVisible();
   await expect(page.getByText(/^CC-\d{4}-001$/)).toBeVisible();
   await expect(page.getByText('8 on 8 dates (2 timesheet pages)')).toBeVisible();
-  await expect(page.getByText('$20.00 / h')).toBeVisible();
+  await expect(page.getByText('$20.00 / hr')).toBeVisible();
   await expect(
-    page.getByRole('row', { name: 'CHW experience hours 8.00 h $160.00' }),
+    page.getByRole('row', { name: 'CHW experience hours 8.00 hrs $160.00' }),
   ).toBeVisible();
-  await expect(page.getByRole('row', { name: 'Total 8.00 h $160.00' })).toBeVisible();
+  await expect(page.getByRole('row', { name: 'Total 8.00 hrs $160.00' })).toBeVisible();
   // The NTE comes prefilled from the source (decision 0023): $10,320.00 − $160.00.
   await expect(page.getByText('$10,320.00')).toBeVisible();
   await expect(page.getByText('$10,160.00')).toBeVisible();

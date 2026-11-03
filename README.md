@@ -31,10 +31,15 @@ Then fill in setup: your name, initials, mailing address, and the hourly rate fr
 - Pick what you did, add counts and notes if you like, then **Save**. Every entry is TISUPP, CHW experience hours (decision 0023). Notes appear on the timesheet: **don't include client names.**
 - Tap an entry on Home to fix or delete it, until it is invoiced.
 - At 240 hours, Home reminds you to generate your invoice and then change your rate to $23.00 in **Settings**.
+- **My stats** on Home shows the hours you've invoiced, the hrs needed for your pay increase (240) and the hrs needed for CHW Cert eligibility (480). It counts invoices made on this phone.
+
+### Work Hours Report
+
+For the ADHS **Community Health Worker Hours Worked/Volunteered Attestation Form**. Tap **Eligible** in My stats once you reach 480 hours, or open it any time from **Settings › Work Hours Report**. It lists your invoiced hours from the past three years for each core competency, in the form's order, with the dates. Tap **Share report** to send yourself a PDF, a picture (PNG) and a CSV, then copy each line onto the form. Your organization's representative fills in and signs the rest of the form.
 
 ### Invoicing
 
-1. On Home, tap **Generate Regen Invoice**. Check the preview, then tap **Create invoice files**.
+1. On Home, tap **Generate Regen Invoice** (under Past invoices). Check the preview, then tap **Create invoice files**.
 2. Tap **Share files** and email the four files to yourself.
 3. Sign the PDF, or the picture (PNG) of the invoice page in your photo app. Sign one, not both. Email the signed file with both CSV files to your reviewer.
 
