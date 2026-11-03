@@ -58,7 +58,7 @@ test('setup → 9 dates of entries → invoice → files → re-share', async ({
   await expectAccessible(page, 'split step, hours left');
   await page.getByRole('button', { name: 'More time on Outreach' }).click();
   await page.getByRole('button', { name: 'More time on Outreach' }).click();
-  await expect(page.getByText('All 1.5 h assigned')).toBeVisible();
+  await expect(page.getByText('All 1.5 hrs assigned')).toBeVisible();
   await expectAccessible(page, 'split step');
   await page.getByRole('button', { name: 'Next' }).click();
   await expect(heading(page, 'Counts and notes')).toBeVisible();
@@ -71,7 +71,7 @@ test('setup → 9 dates of entries → invoice → files → re-share', async ({
   await expect(heading(page, 'CHW Gila River Contractors')).toBeVisible();
 
   for (const entry of TYPED) await addEntry(page, entry);
-  await expect(page.getByText('9 entries · 12 h · $240.00')).toBeVisible();
+  await expect(page.getByText('9 entries · 12 hrs · $240.00')).toBeVisible();
   await expectAccessible(page, 'home with entries');
 
   // Preview.
@@ -81,9 +81,9 @@ test('setup → 9 dates of entries → invoice → files → re-share', async ({
   await expect(page.getByText('9 on 9 dates (2 timesheet pages)')).toBeVisible();
   // One budget line for everything (decision 0023).
   await expect(
-    page.getByRole('row', { name: 'CHW experience hours 12.00 h $240.00' }),
+    page.getByRole('row', { name: 'CHW experience hours 12.00 hrs $240.00' }),
   ).toBeVisible();
-  await expect(page.getByRole('row', { name: 'Total 12.00 h $240.00' })).toBeVisible();
+  await expect(page.getByRole('row', { name: 'Total 12.00 hrs $240.00' })).toBeVisible();
   await expectAccessible(page, 'invoice preview');
 
   // Create and share.

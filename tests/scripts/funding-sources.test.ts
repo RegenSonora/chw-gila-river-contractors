@@ -42,7 +42,7 @@ describe('funding source files', () => {
 
   it('TISUPP has 21 tasks, one CHW experience hours line, $20.00 then $23.00 after 240 hours and a $10,320 NTE (decision 0023)', () => {
     expect(tisupp['code']).toBe('TISUPP');
-    expect(tisupp['version']).toBe(3);
+    expect(tisupp['version']).toBe(4);
     expect(tisupp.tasks).toHaveLength(21);
     expect(tisupp.tasks.find((t) => t['id'] === 'planning-and-conducting-surveys')).toMatchObject({
       name: 'Individual and community assessment',
@@ -55,6 +55,13 @@ describe('funding source files', () => {
     expect(tisupp['rate_step']).toEqual({ after_quarters: 960, rate_cents: 2300 });
     // 240 h at $20.00 + 240 h at $23.00
     expect(tisupp['default_nte_cents']).toBe(240 * 2000 + 240 * 2300);
+  });
+
+  it('TISUPP: CHW Cert eligibility at 480 hours and a report funding line (decision 0026)', () => {
+    expect(tisupp['certification_step']).toEqual({ after_quarters: 1920, name: 'CHW Cert' });
+    expect(tisupp['report_funding_line']).toBe(
+      "Trauma-Informed Substance Use Prevention Program (TISUPP), funded by the Governor's Office of Youth, Faith and Family through Arizona State University. Contracted through Regenerating Sonora, Inc.",
+    );
   });
 });
 
@@ -106,6 +113,13 @@ describe('funding source schema', () => {
       [],
     );
     expect(changed((s) => delete s['rate_step'])).toEqual([]);
+    expect(changed((s) => (s['certification_step'] = { after_quarters: 1920 }))).not.toEqual([]);
+    expect(
+      changed((s) => (s['certification_step'] = { after_quarters: 0, name: 'X' })),
+    ).not.toEqual([]);
+    expect(changed((s) => (s['report_funding_line'] = ''))).not.toEqual([]);
+    expect(changed((s) => delete s['certification_step'])).toEqual([]);
+    expect(changed((s) => delete s['report_funding_line'])).toEqual([]);
     expect(changed((s) => delete s['default_nte_cents'])).toEqual([]);
   });
 
