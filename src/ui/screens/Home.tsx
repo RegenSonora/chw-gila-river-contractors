@@ -1,5 +1,5 @@
-// Home (SPEC §5, §6): source chip, "Not yet invoiced", My stats, Past invoices, Generate,
-// Start, Record time, and the 240-hour raise reminder (decisions 0023, 0025, 0026).
+// Home (SPEC §5, §6): source chip, "Not yet invoiced", My stats, Past invoices, and in the
+// bottom bar Generate, Start timer, Record time; and the 240-hour raise reminder (decisions 0023, 0025, 0026).
 import { useState } from 'preact/hooks';
 import {
   formatDollars,
@@ -192,6 +192,16 @@ export function Home() {
               Updated, tap to reload
             </button>
           )}
+          {/* Decision 0026 (changed Nov 16): above Start timer, light green with dark gold text. */}
+          {summary.count > 0 && (
+            <button
+              type="button"
+              class="btn btn-start btn-generate"
+              onClick={() => void actions.openInvoicePreview(selectedSource.id)}
+            >
+              Generate Regen Invoice
+            </button>
+          )}
           <button type="button" class="btn btn-start" onClick={() => void actions.startTimer()}>
             Start timer
           </button>
@@ -260,16 +270,6 @@ export function Home() {
             : 'None yet'}
         </span>
       </button>
-      {/* Decision 0026: under Past invoices, the same size, light green with dark gold text. */}
-      {summary.count > 0 && (
-        <button
-          type="button"
-          class="card nav-row home-generate"
-          onClick={() => void actions.openInvoicePreview(selectedSource.id)}
-        >
-          Generate Regen Invoice
-        </button>
-      )}
       <ToastBar />
       {picking && (
         <SourcePickerSheet

@@ -102,13 +102,13 @@ The Gila River contractors bill TISUPP only (decision 0023).
 - **Counts (all optional, default 0):** Contacts, Referrals given, Referral follow-ups, Rides provided, Applications completed, plus "Add another count" (label + number).
 - **Notes:** optional, with the warning "Don't include client names. Notes appear on the timesheet."
 - **Editing:** entries can be edited or deleted until invoiced, then are locked. Save and delete show Undo. If the billed hours change, a one-task entry follows them; a split entry must be split again before saving. Changing the times clips an entry's breaks to them; **Remove breaks** clears them (decision 0027).
-- **Home:** "Not yet invoiced" list for the selected funding source with entry count, hours and amount. With nothing waiting it says "Start timer and start working or record time." Below it, **My stats** (hours invoiced, hrs needed for pay increase, hrs needed for CHW Cert eligibility), then Past invoices, then Generate Regen Invoice (decision 0026). Hour amounts read "hrs" ("4.5 hrs").
+- **Home:** "Not yet invoiced" list for the selected funding source with entry count, hours and amount. With nothing waiting it says "Start timer and start working or record time." Below it, **My stats** (hours invoiced, hrs needed for pay increase, hrs needed for CHW Cert eligibility), then Past invoices (decision 0026). The bottom bar holds Generate Regen Invoice (when entries are waiting), Start timer and Record time, each 64 px tall. Hour amounts read "hrs" ("4.5 hrs").
 - **Work Hours Report (decision 0026):** from Settings or the Eligible button in My stats. Invoiced hours of the past three years per core competency, in the order and wording of the ADHS CHW Hours Worked/Volunteered Attestation Form, with the dates completed; shared as PDF, PNG and CSV.
 
 ## 6. Invoices
 
 - **One invoice per funding source.** It includes every uninvoiced entry for that source.
-- **Generate button:** shown only when the selected source has at least one uninvoiced entry; labelled "Generate Regen Invoice" (decision 0025); a row under Past invoices, the same size, light green with dark gold text (decision 0026).
+- **Generate button:** shown only when the selected source has at least one uninvoiced entry; labelled "Generate Regen Invoice" (decision 0025); in the bottom bar right above Start timer, the same size, light green with dark gold text (decisions 0025, 0026).
 - **Invoice number:** `<INITIALS>-<YYYY>-<NNN>`, for example `CC-2026-004`. One counter shared by all funding sources. It keeps counting across years and is never reset by changing initials. YYYY is the invoice date's year.
 - **Invoice date:** the day it is generated. **Service period:** first entry date to last entry date.
 - **Lines:** one per budget line: hours, rate, amount. Line amount = quarter-hours × rate in cents ÷ 4, rounded half up to the cent. Invoice total = sum of line amounts.
