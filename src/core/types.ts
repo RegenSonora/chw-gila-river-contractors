@@ -1,5 +1,8 @@
 // Shared record shapes. Field names are snake_case so stored and exported data read the same.
 // Money is integer cents; hours are integer quarter-hours (CLAUDE.md data conventions).
+import type { Break } from './time';
+
+export type { Break } from './time';
 
 /** A funding source file in src/funding-sources/ (schemas/funding-source.schema.json, SPEC §3). */
 export interface FundingSourceConfig {
@@ -90,6 +93,8 @@ export interface Entry {
   start: string;
   /** Raw stop, ISO 8601 with offset, whole seconds. */
   stop: string;
+  /** Pauses between start and stop; billed time leaves them out (decision 0027). */
+  breaks: Break[];
   /** YYYY-MM-DD: the start's local date. */
   entry_date: string;
   /** The tasks done, with the billed hours split between them (decision 0024). */
@@ -122,6 +127,7 @@ export interface InvoiceEntry {
   id: string;
   start: string;
   stop: string;
+  breaks: Break[];
   entry_date: string;
   quarters: number;
   /** In the order the CHW checked them; quarters add up to `quarters`. */

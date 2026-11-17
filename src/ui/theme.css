@@ -1421,3 +1421,13 @@ p {
 .report-sum td {
   font-weight: 700;
 }
+
+/* Pause and Resume on the timer (decision 0027). */
+.btn-pause {
+  min-height: 64px;
+  font-size: 20px;
+}
+
+.timer-paused .dot {
+  background: var(--muted);
+}

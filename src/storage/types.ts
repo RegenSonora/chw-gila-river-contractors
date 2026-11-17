@@ -9,12 +9,14 @@ import type {
   Profile,
   SourceSettings,
   TaskShare,
+  Break,
 } from '../core/types';
+import type { RunningTimer } from '../core/timer';
 
 /** What the app remembers between screens (SPEC §5). */
 export interface AppState {
-  /** Set while a timer runs, so it survives closing the app. */
-  running_timer: { start: string; source_id: string } | null;
+  /** Set while a timer runs or is paused, so it survives closing the app (decision 0027). */
+  running_timer: RunningTimer | null;
   /** The header chip's funding source. */
   selected_source_id: string | null;
   /** Kept per source because each source has its own tasks and budget lines. */
@@ -37,6 +39,8 @@ export interface EntryDraft {
   /** Raw times, ISO 8601 with offset. Null until valid times are known. */
   start: string | null;
   stop: string | null;
+  /** A timed entry's pauses; empty for hand-entered times (decision 0027). */
+  breaks: Break[];
   source_id: string;
   /** Checked tasks in the order checked, with their shares so far (decision 0024). */
   tasks: TaskShare[];

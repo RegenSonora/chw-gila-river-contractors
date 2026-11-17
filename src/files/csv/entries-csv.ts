@@ -1,7 +1,7 @@
 // Entry log CSV (SPEC §7, decisions 0001 and 0024): one header row and one row per task share of
 // each entry, the same columns for every invoice so files combine. No per-entry dollar amount.
 import { formatCentsPlain, formatQuarters } from '../../core/money';
-import { rawSeconds } from '../../core/time';
+import { pausedSeconds, rawSeconds } from '../../core/time';
 import type { Invoice } from '../../core/types';
 import { csvFile } from './csv';
 
@@ -15,6 +15,7 @@ export const ENTRY_LOG_COLUMNS = [
   'start',
   'stop',
   'raw_duration',
+  'paused',
   'billed_hours',
   'task',
   'core_competency',
@@ -58,7 +59,9 @@ export function entriesCsv(invoice: Invoice): Uint8Array<ArrayBuffer> {
         e.entry_date,
         e.start,
         e.stop,
-        durationText(rawSeconds(e.start, e.stop)),
+        // Worked time before rounding, then the pauses (decision 0027).
+        durationText(rawSeconds(e.start, e.stop) - pausedSeconds(e.breaks)),
+        durationText(pausedSeconds(e.breaks)),
         formatQuarters(t.quarters),
         t.task_name,
         t.core_competency ?? '',
