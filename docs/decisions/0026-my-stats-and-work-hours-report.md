@@ -1,6 +1,6 @@
 # 0026 — My stats, the Work Hours Report, "hrs", and Generate under Past invoices
 
-- **Status:** Accepted, November 2, 2026
+- **Status:** Accepted by Chris, November 16, 2026; point 2 changed (see the end)
 - **Spec:** SPEC §3 (TISUPP), §5 (Home), §6 (Generate button), §9 (screens), §10 (styling); changes decision 0025's Generate button
 
 ## Decision
@@ -39,3 +39,7 @@ CHWs asked to see their progress toward the raise and toward CHW certification, 
 
 - Hours count only invoices made on this phone, the same as the NTE tracker.
 - The report has one organization. The ADHS form asks for one page per organization, so hours worked elsewhere need their own form.
+
+## Change, November 16, 2026
+
+Point 2 is replaced: Generate Regen Invoice goes back to the bottom bar, right above Start timer, 64 px tall like Start timer and Record time (decision 0025's change). It keeps the light green `#dcefd0` with dark gold `#7a5800` text. The main actions are in the bottom third again (SPEC §10).
