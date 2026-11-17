@@ -116,7 +116,15 @@ describe.each(adapters)('$name adapter', (adapter) => {
       const storage = await adapter.make();
       expect(await storage.getAppState()).toEqual(emptyAppState());
       const state = rememberPicks(
-        { ...emptyAppState(), running_timer: { start: NOW, source_id: 'tisupp' } },
+        {
+          ...emptyAppState(),
+          running_timer: {
+            start: NOW,
+            source_id: 'tisupp',
+            paused_at: NOW,
+            breaks: [{ start: NOW, stop: NOW }],
+          },
+        },
         'tisupp',
         ['outreach'],
         'outreach-and-marketing',
@@ -137,6 +145,7 @@ describe.each(adapters)('$name adapter', (adapter) => {
           hand: null,
           start: '2026-10-30T09:12:04-07:00',
           stop: '2026-10-30T10:37:10-07:00',
+          breaks: [{ start: '2026-10-30T09:40:00-07:00', stop: '2026-10-30T09:50:00-07:00' }],
           source_id: 'tisupp',
           tasks: [
             { task_id: 'client-check-in', quarters: 4 },

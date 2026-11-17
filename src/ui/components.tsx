@@ -411,7 +411,7 @@ export function entryNames(
 }
 
 export function EntryRow({ entry, onOpen }: { entry: Entry; onOpen: () => void }) {
-  const times = checkEntryTimes(entry.start, entry.stop);
+  const times = checkEntryTimes(entry.start, entry.stop, entry.breaks);
   const names = entryNames(entry);
   return (
     <button type="button" class="entry" onClick={onOpen}>

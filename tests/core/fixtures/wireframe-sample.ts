@@ -54,6 +54,7 @@ export function makeEntry(
     source_id: 'tisupp',
     start: startIso,
     stop: stopIso,
+    breaks: [],
     entry_date: date,
     // One task holding all the billed hours; split entries pass `tasks` in `extra`.
     tasks: [{ task_id, quarters: times.ok ? times.quarters : 0 }],
@@ -254,3 +255,16 @@ export const splitSampleEntries: Entry[] = sampleEntries.map((e) =>
 export function splitSampleInput(overrides: Partial<InvoiceInput> = {}): InvoiceInput {
   return sampleInput({ entries: splitSampleEntries, ...overrides });
 }
+
+/**
+ * The split sample with a 7-minute break in the Oct 28 entry (10:00–11:30, decision 0027). It
+ * still rounds to 1.50 h, so totals stay 9.25 h and $185.00.
+ */
+export const pausedSampleEntries: Entry[] = splitSampleEntries.map((e) =>
+  e.id === uuid(6)
+    ? {
+        ...e,
+        breaks: [{ start: at('2026-10-28', '10:30:00'), stop: at('2026-10-28', '10:37:00') }],
+      }
+    : e,
+);

@@ -91,8 +91,9 @@ The Gila River contractors bill TISUPP only (decision 0023).
 
 - **Funding source:** a chip in the header picks the source for new entries. The chip is locked while a timer runs. The task screen shows the source with **Change**. With one funding source set up there is no chip and no source row (decision 0023).
 - **Timer:** Start → large running clock with the largest button, **Stop**. The timer survives closing the app (the start time is stored). **Discard timer** needs a confirmation or Undo.
+- **Pause (decision 0027):** **Pause** stops the clock; **Resume** goes on. A pause can last any length and survives closing the app. On Stop, one entry is saved with its real start and stop plus its breaks; Stop while paused ends the entry at the pause.
 - **Record time** (decision 0025): date, start, end. An end earlier than the start means the next day.
-- **Rounding:** each entry rounds to the nearest 0.25 h. Chris accepted that per-entry rounding can bill slightly more than raw time.
+- **Rounding:** each entry rounds to the nearest 0.25 h, from its worked time (start to stop less any breaks). Chris accepted that per-entry rounding can bill slightly more than raw time.
 - **Too short:** an entry that rounds to 0 h (under 7.5 minutes) is blocked with a plain message; it is never saved.
 - **Overlaps:** blocked, compared on raw start and stop times.
 - **Entry date:** an entry belongs to its start date, including entries that cross midnight.
@@ -100,7 +101,7 @@ The Gila River contractors bill TISUPP only (decision 0023).
 - **Several tasks (decision 0024):** tasks are check boxes. With two or more checked, "Split your time" gives each a share in 0.25 h steps, starting with all hours on the first checked task, and shows what is left ("0.50 h left", "0.25 h too many", "All 1.50 h assigned"). Next is blocked until the shares add up to the entry's billed hours. A task left at 0 h is dropped. One checked task gets all the hours and skips the step.
 - **Counts (all optional, default 0):** Contacts, Referrals given, Referral follow-ups, Rides provided, Applications completed, plus "Add another count" (label + number).
 - **Notes:** optional, with the warning "Don't include client names. Notes appear on the timesheet."
-- **Editing:** entries can be edited or deleted until invoiced, then are locked. Save and delete show Undo. If the billed hours change, a one-task entry follows them; a split entry must be split again before saving.
+- **Editing:** entries can be edited or deleted until invoiced, then are locked. Save and delete show Undo. If the billed hours change, a one-task entry follows them; a split entry must be split again before saving. Changing the times clips an entry's breaks to them; **Remove breaks** clears them (decision 0027).
 - **Home:** "Not yet invoiced" list for the selected funding source with entry count, hours and amount. With nothing waiting it says "Start timer and start working or record time." Below it, **My stats** (hours invoiced, hrs needed for pay increase, hrs needed for CHW Cert eligibility), then Past invoices (decision 0026). The bottom bar holds Generate Regen Invoice (when entries are waiting), Start timer and Record time, each 64 px tall. Hour amounts read "hrs" ("4.5 hrs").
 - **Work Hours Report (decision 0026):** from Settings or the Eligible button in My stats. Invoiced hours of the past three years per core competency, in the order and wording of the ADHS CHW Hours Worked/Volunteered Attestation Form, with the dates completed; shared as PDF, PNG and CSV.
 
@@ -183,7 +184,8 @@ Total hours,,,1.50,1.50,
 | `entry_date` | 2026-10-30 | Start date |
 | `start` | 2026-10-30T09:12:04-07:00 | ISO 8601 with offset |
 | `stop` | 2026-10-30T10:37:10-07:00 | |
-| `raw_duration` | 1:25:06 | h:mm:ss before rounding, for the whole entry |
+| `raw_duration` | 1:25:06 | Worked time, h:mm:ss before rounding, for the whole entry (start to stop less breaks) |
+| `paused` | 0:20:00 | Total of the entry's breaks, h:mm:ss (decision 0027) |
 | `billed_hours` | 1.00 | This row's task share, in 0.25 h; the column adds up to the invoice hours |
 | `task` | Client check in | |
 | `core_competency` | Interpersonal & Relationship-Building | Blank for Domestic support |
@@ -205,7 +207,7 @@ Total hours,,,1.50,1.50,
 
 ### Fingerprint and QR code
 
-- **Fingerprint:** SHA-256 over a canonical JSON form of the invoice (header, entries, lines, totals, rate). Shown short on the PDF (`3F9A-21C7`), full in both CSVs and the QR code. The canonical form is versioned and must never change silently. v1 has one task per entry; v2 (decision 0024) lists each entry's task shares. Invoices keep the version they were made with.
+- **Fingerprint:** SHA-256 over a canonical JSON form of the invoice (header, entries, lines, totals, rate). Shown short on the PDF (`3F9A-21C7`), full in both CSVs and the QR code. The canonical form is versioned and must never change silently. v1 has one task per entry; v2 (decision 0024) lists each entry's task shares; v3 (decision 0027) adds each entry's breaks. Invoices keep the version they were made with.
 - **QR code:** invoice #, period, hours and amount by budget line, fingerprint. Readable after printing or scanning so a later system can match paper to data.
 
 ## 8. Signatures (outside the app)

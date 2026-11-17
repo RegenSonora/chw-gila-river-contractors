@@ -105,6 +105,7 @@ describe('checkEntryTimes', () => {
     expect(checkEntryTimes('2026-10-30T09:00:00-07:00', '2026-10-30T09:07:30-07:00')).toEqual({
       ok: true,
       seconds: 450,
+      paused_seconds: 0,
       quarters: 1,
     });
   });

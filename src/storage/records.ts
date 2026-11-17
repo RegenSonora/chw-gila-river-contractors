@@ -6,10 +6,11 @@ import type { StoreName, StoredRecord, Tx } from './types';
 /**
  * v1: first release. v2: app state gains `draft` (the half-entered record, SPEC §10).
  * v3: an entry's `task_id` becomes `tasks`, a list of task shares (decision 0024).
+ * v4: entries and the running timer get `breaks`; the timer gets `paused_at` (decision 0027).
  */
-export const DATA_VERSION = 3;
+export const DATA_VERSION = 4;
 
-/** The stores of v1. v2 and v3 keep the same stores. */
+/** The stores of v1. v2 to v4 keep the same stores. */
 export const STORES_V1: readonly StoreName[] = [
   'meta',
   'profile',

@@ -3,8 +3,8 @@
 import { canonicalJson } from './canonical';
 import type { Counts, Invoice, InvoiceEntry, InvoiceTaskShare } from './types';
 
-/** The version new invoices get. v2: several tasks per entry (decision 0024). */
-export const CANONICAL_VERSION = 2;
+/** The version new invoices get. v2: several tasks per entry (decision 0024). v3: breaks (decision 0027). */
+export const CANONICAL_VERSION = 3;
 
 /** The fields an invoice is fingerprinted over: header, entries, lines, totals and rate. */
 export type FingerprintedInvoice = Omit<Invoice, 'fingerprint'>;
@@ -81,10 +81,10 @@ export function canonicalFormV1(invoice: FingerprintedInvoice): string {
   });
 }
 
-/** Canonical form v2: as v1, but each entry lists its task shares (decision 0024). */
-export function canonicalFormV2(invoice: FingerprintedInvoice): string {
+/** Forms v2 and v3 differ only by v3's breaks; v2's output must never change. */
+function formWithShares(invoice: FingerprintedInvoice, v: 2 | 3): string {
   return canonicalJson({
-    v: 2,
+    v,
     id: invoice.id,
     number: invoice.number,
     sequence: invoice.sequence,
@@ -107,6 +107,7 @@ export function canonicalFormV2(invoice: FingerprintedInvoice): string {
       id: e.id,
       start: e.start,
       stop: e.stop,
+      ...(v === 3 && { breaks: e.breaks.map((b) => ({ start: b.start, stop: b.stop })) }),
       entry_date: e.entry_date,
       quarters: e.quarters,
       tasks: e.tasks.map((t) => ({
@@ -132,9 +133,20 @@ export function canonicalFormV2(invoice: FingerprintedInvoice): string {
   });
 }
 
+/** Canonical form v2: as v1, but each entry lists its task shares (decision 0024). */
+export function canonicalFormV2(invoice: FingerprintedInvoice): string {
+  return formWithShares(invoice, 2);
+}
+
+/** Canonical form v3: as v2, plus each entry's breaks (decision 0027). */
+export function canonicalFormV3(invoice: FingerprintedInvoice): string {
+  return formWithShares(invoice, 3);
+}
+
 const FORMS: Record<number, (invoice: FingerprintedInvoice) => string> = {
   1: canonicalFormV1,
   2: canonicalFormV2,
+  3: canonicalFormV3,
 };
 
 /** The canonical string for the invoice's own canonical version. */

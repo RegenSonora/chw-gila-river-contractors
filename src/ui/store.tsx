@@ -5,6 +5,10 @@ import {
   checkEntryTimes,
   defaultBudgetLine,
   findOverlaps,
+  pauseTimer,
+  resumeTimer,
+  startTimer,
+  timerStop,
   type Entry,
   type FundingSourceConfig,
   type Invoice,
@@ -331,7 +335,7 @@ function useStore(storage: Storage, initial: Data) {
       );
 
     const entryWords = (e: Entry) => {
-      const times = checkEntryTimes(e.start, e.stop);
+      const times = checkEntryTimes(e.start, e.stop, e.breaks);
       return `${times.ok ? hoursLabel(times.quarters) : ''}, ${tasksLabel(sourceOf(e.source_id), e.tasks)}`;
     };
 
@@ -348,23 +352,37 @@ function useStore(storage: Storage, initial: Data) {
         setToast(null);
         return saveApp({
           ...d().app,
-          running_timer: { start: phoneNow(), source_id: selectedSourceId() },
+          running_timer: startTimer(phoneNow(), selectedSourceId()),
         });
+      },
+
+      /** Pause stops the clock; the paused timer survives closing the app (decision 0027). */
+      pauseTimer() {
+        const timer = d().app.running_timer;
+        if (!timer) return Promise.resolve();
+        return saveApp({ ...d().app, running_timer: pauseTimer(timer, phoneNow()) });
+      },
+
+      resumeTimer() {
+        const timer = d().app.running_timer;
+        if (!timer) return Promise.resolve();
+        return saveApp({ ...d().app, running_timer: resumeTimer(timer, phoneNow()) });
       },
 
       /** Stop the timer. On "too short" or an overlap the timer keeps running until the CHW decides. */
       async stopTimer(): Promise<StopResult> {
         const timer = d().app.running_timer;
         if (!timer) return { kind: 'ok' };
-        const stop = phoneNow();
-        const times = checkEntryTimes(timer.start, stop);
+        // Stopped while paused, the entry ends at the pause (decision 0027).
+        const { start, stop, breaks } = timerStop(timer, phoneNow());
+        const times = checkEntryTimes(start, stop, breaks);
         if (!times.ok) return { kind: 'too_short' };
-        const other = findOverlaps({ start: timer.start, stop }, d().entries)[0];
+        const other = findOverlaps({ start, stop }, d().entries)[0];
         if (other) return { kind: 'overlap', other };
         await saveApp({
           ...d().app,
           running_timer: null,
-          draft: newTimerDraft(timer.source_id, timer.start, stop, lastLine(timer.source_id)),
+          draft: newTimerDraft(timer.source_id, start, stop, lastLine(timer.source_id), breaks),
         });
         push('task');
         return { kind: 'ok' };
@@ -378,15 +396,21 @@ function useStore(storage: Storage, initial: Data) {
       async fixTimerTimes() {
         const timer = d().app.running_timer;
         if (!timer) return;
-        const start = localDateTime(timer.start);
-        const stop = localDateTime(phoneNow());
+        const ended = timerStop(timer, phoneNow());
+        const start = localDateTime(ended.start);
+        const stop = localDateTime(ended.stop);
+        const draft = newHandDraft(
+          timer.source_id,
+          { date: start.date, start: start.time, end: stop.time },
+          lastLine(timer.source_id),
+        );
         await saveApp({
           ...d().app,
           running_timer: null,
-          draft: newHandDraft(
-            timer.source_id,
-            { date: start.date, start: start.time, end: stop.time },
-            lastLine(timer.source_id),
+          // Keep the pauses, clipped to the times shown (decision 0027).
+          draft: withHand(
+            { ...draft, breaks: ended.breaks },
+            draft.hand ?? { date: '', start: '', end: '' },
           ),
         });
         push('times');

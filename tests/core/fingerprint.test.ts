@@ -5,6 +5,7 @@ import {
   canonicalForm,
   canonicalFormV1,
   canonicalFormV2,
+  canonicalFormV3,
   fingerprintOf,
   sha256Hex,
   shortFingerprint,
@@ -16,6 +17,7 @@ import { v2ToV3 } from '../../src/storage/upgrades';
 import { must } from './fixtures/wireframe-sample';
 import goldenV1 from './golden/fingerprint-v1.json';
 import goldenV2 from './golden/fingerprint-v2.json';
+import goldenV3 from './golden/fingerprint-v3.json';
 
 // Pinned forever (CLAUDE.md rule 8). If a test here fails, the canonical form changed:
 // add a new canonical version instead of editing this file.
@@ -35,6 +37,7 @@ const cases: Golden[] = storedV1.map((c) => ({
 }));
 
 const casesV2 = goldenV2 as unknown as Golden[];
+const casesV3 = goldenV3 as unknown as Golden[];
 
 describe('canonicalJson', () => {
   it('sorts keys at every level and drops whitespace', () => {
@@ -78,8 +81,8 @@ describe('canonicalJson', () => {
 });
 
 describe('fingerprint v1 golden files, after the data v3 upgrade', () => {
-  it('new invoices use canonical version 2 (decision 0024)', () => {
-    expect(CANONICAL_VERSION).toBe(2);
+  it('new invoices use canonical version 3 (decision 0027)', () => {
+    expect(CANONICAL_VERSION).toBe(3);
   });
 
   it('the upgrade turns each entry into a single task share', () => {
@@ -145,6 +148,34 @@ describe('fingerprint v2 golden files (decision 0024)', () => {
   });
 });
 
+describe('fingerprint v3 golden files (decision 0027)', () => {
+  it.each(casesV3.map((c) => [c.name, c] as const))('%s: canonical form is unchanged', (_, c) => {
+    expect(c.invoice.canonical_version).toBe(3);
+    expect(canonicalFormV3(c.invoice)).toBe(c.canonical);
+    expect(canonicalForm(c.invoice)).toBe(c.canonical);
+  });
+
+  it.each(casesV3.map((c) => [c.name, c] as const))(
+    '%s: fingerprint is unchanged',
+    async (_, c) => {
+      expect(await sha256Hex(c.canonical)).toBe(c.fingerprint);
+      expect(await verifyFingerprint(c.invoice)).toBe(true);
+    },
+  );
+
+  it('changes when a break changes; v2 ignores breaks, so v2 invoices still verify', async () => {
+    const base = must(casesV3[0]).invoice;
+    const copy = structuredClone(base);
+    const entry = must(copy.entries.find((e) => e.breaks.length > 0));
+    must(entry.breaks[0]).stop = '2026-10-28T10:38:00-07:00';
+    expect(await fingerprintOf(copy)).not.toBe(base.fingerprint);
+    const v2 = must(casesV2[0]).invoice;
+    expect(canonicalFormV2({ ...v2, entries: v2.entries.map((e) => ({ ...e, breaks: [] })) })).toBe(
+      must(casesV2[0]).canonical,
+    );
+  });
+});
+
 describe('what the fingerprint covers', () => {
   const base = must(cases[0]).invoice;
 
@@ -183,7 +214,7 @@ describe('what the fingerprint covers', () => {
   });
 
   it('refuses an unknown canonical version', () => {
-    expect(() => canonicalForm({ ...base, canonical_version: 3 })).toThrow();
+    expect(() => canonicalForm({ ...base, canonical_version: 4 })).toThrow();
   });
 });
 

@@ -63,17 +63,78 @@ export function roundToQuarters(seconds: number): number {
   return Math.floor((seconds + SECONDS_PER_QUARTER / 2) / SECONDS_PER_QUARTER);
 }
 
-export type EntryTimesCheck =
-  | { ok: true; seconds: number; quarters: number }
-  | { ok: false; reason: 'stop_before_start' | 'too_short' };
+/** A pause inside an entry (decision 0027): ISO 8601 with offset, start before stop. */
+export interface Break {
+  start: string;
+  stop: string;
+}
 
-/** Can these raw times be saved? An entry that rounds to 0 h is never saved (SPEC §5 "Too short"). */
-export function checkEntryTimes(startIso: string, stopIso: string): EntryTimesCheck {
-  const seconds = rawSeconds(startIso, stopIso);
-  if (seconds < 0) return { ok: false, reason: 'stop_before_start' };
+export type EntryTimesCheck =
+  | { ok: true; seconds: number; paused_seconds: number; quarters: number }
+  | { ok: false; reason: 'stop_before_start' | 'too_short' | 'bad_breaks' };
+
+const epochOr = (iso: string): number | null => {
+  try {
+    return parseIso(iso).epochMs;
+  } catch {
+    return null;
+  }
+};
+
+/** Breaks in order, each at least a second long, not overlapping, inside start..stop. */
+export function breaksValid(startIso: string, stopIso: string, breaks: readonly Break[]): boolean {
+  let last = epochOr(startIso);
+  const end = epochOr(stopIso);
+  if (last === null || end === null) return false;
+  for (const b of breaks) {
+    const s = epochOr(b.start);
+    const e = epochOr(b.stop);
+    if (s === null || e === null || s < last || e <= s || e > end) return false;
+    last = e;
+  }
+  return true;
+}
+
+/** Whole seconds paused across the breaks. */
+export function pausedSeconds(breaks: readonly Break[]): number {
+  return breaks.reduce((sum, b) => sum + rawSeconds(b.start, b.stop), 0);
+}
+
+/**
+ * Can these raw times be saved? Worked time is start to stop less breaks; an entry that rounds
+ * to 0 h is never saved (SPEC §5 "Too short", decision 0027).
+ */
+export function checkEntryTimes(
+  startIso: string,
+  stopIso: string,
+  breaks: readonly Break[] = [],
+): EntryTimesCheck {
+  const span = rawSeconds(startIso, stopIso);
+  if (span < 0) return { ok: false, reason: 'stop_before_start' };
+  if (!breaksValid(startIso, stopIso, breaks)) return { ok: false, reason: 'bad_breaks' };
+  const paused = pausedSeconds(breaks);
+  const seconds = span - paused;
   const quarters = roundToQuarters(seconds);
   if (quarters === 0) return { ok: false, reason: 'too_short' };
-  return { ok: true, seconds, quarters };
+  return { ok: true, seconds, paused_seconds: paused, quarters };
+}
+
+/** Breaks fitted to new times: kept inside, clipped where they cross, dropped outside. */
+export function clipBreaks(breaks: readonly Break[], startIso: string, stopIso: string): Break[] {
+  const start = epochOr(startIso);
+  const stop = epochOr(stopIso);
+  if (start === null || stop === null || stop <= start) return [];
+  const out: Break[] = [];
+  for (const b of breaks) {
+    const s = epochOr(b.start);
+    const e = epochOr(b.stop);
+    if (s === null || e === null) continue;
+    const from = Math.max(s, start);
+    const to = Math.min(e, stop);
+    if (to <= from) continue;
+    out.push({ start: from === s ? b.start : startIso, stop: to === e ? b.stop : stopIso });
+  }
+  return out;
 }
 
 function localToEpoch(localMs: number, offsetAt: OffsetAt): number {

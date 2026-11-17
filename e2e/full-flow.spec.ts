@@ -106,6 +106,13 @@ test('setup → 9 dates of entries → invoice → files → re-share', async ({
   const [header = [], ...rows] = parseCsv(entriesFile?.bytes ?? []);
   const col = (name: string) => header.indexOf(name);
   expect(rows).toHaveLength(10);
+  // Decision 0027: worked time, then the pauses (none here).
+  expect(header.slice(col('raw_duration'), col('raw_duration') + 3)).toEqual([
+    'raw_duration',
+    'paused',
+    'billed_hours',
+  ]);
+  expect(new Set(rows.map((r) => r[col('paused')]))).toEqual(new Set(['0:00:00']));
   expect(new Set(rows.map((r) => r[col('funding_source')]))).toEqual(new Set(['TISUPP']));
   const billed = rows.reduce((sum, r) => sum + Number(r[col('billed_hours')]) * 4, 0);
   expect(billed).toBe(48);

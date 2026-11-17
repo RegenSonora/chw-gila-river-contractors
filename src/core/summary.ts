@@ -23,7 +23,7 @@ export function uninvoicedSummary(
   const open = uninvoicedEntries(entries, sourceId);
   const perLine = new Map<string, number>();
   for (const e of open) {
-    const times = checkEntryTimes(e.start, e.stop);
+    const times = checkEntryTimes(e.start, e.stop, e.breaks);
     const quarters = times.ok ? times.quarters : 0;
     perLine.set(e.budget_line_id, (perLine.get(e.budget_line_id) ?? 0) + quarters);
   }

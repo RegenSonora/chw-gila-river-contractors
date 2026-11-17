@@ -18,8 +18,8 @@ describe('entry log CSV (SPEC §7, decisions 0001 and 0024)', () => {
     );
   });
 
-  it('has the 23 columns from the spec, in order, for every invoice', async () => {
-    expect(ENTRY_LOG_COLUMNS).toHaveLength(23);
+  it('has the 24 columns from the spec, in order, for every invoice', async () => {
+    expect(ENTRY_LOG_COLUMNS).toHaveLength(24);
     const one = await invoiceFrom({
       entries: [
         makeEntry('2026-10-01', '09:00:00', '09:10:00', 'outreach', 'outreach-and-marketing'),
@@ -112,7 +112,7 @@ describe('entry log CSV (SPEC §7, decisions 0001 and 0024)', () => {
     expect(line.startsWith('CC-2026-004,')).toBe(true);
     expect(line).toContain(',REGEN-GO,');
     expect(line).toContain(
-      ',2026-10-01,2026-10-01T22:30:00-07:00,2026-10-02T00:15:00-07:00,1:45:00,1.75,',
+      ',2026-10-01,2026-10-01T22:30:00-07:00,2026-10-02T00:15:00-07:00,1:45:00,0:00:00,1.75,',
     );
     expect(line).toContain(',Domestic support,,Domestic support,18.00,0,0,0,0,0,');
     expect(line).toContain(`,Food boxes=2; Library cards=1,"'-not a formula, ""really""",`);

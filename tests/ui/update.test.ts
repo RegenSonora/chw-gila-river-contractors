@@ -11,7 +11,12 @@ describe('mid-entry (decision 0014)', () => {
     expect(
       isMidEntry({
         ...emptyAppState(),
-        running_timer: { start: '2026-11-01T09:00:00-07:00', source_id: 'tisupp' },
+        running_timer: {
+          start: '2026-11-01T09:00:00-07:00',
+          source_id: 'tisupp',
+          paused_at: null,
+          breaks: [],
+        },
       }),
     ).toBe(true);
   });

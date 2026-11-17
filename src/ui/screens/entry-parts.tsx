@@ -33,7 +33,10 @@ export function TimeCard({ draft, check }: { draft: EntryDraft; check: TimesChec
         <p class="time-card-when">
           {dateLabel(draft.start.slice(0, 10))} · {timeRangeLabel(draft.start, draft.stop)}
         </p>
-        <p class="hint">Rounded from {durationLabel(check.seconds)}</p>
+        <p class="hint">
+          Rounded from {durationLabel(check.seconds)}
+          {check.paused_seconds > 0 && ` worked · ${durationLabel(check.paused_seconds)} paused`}
+        </p>
       </div>
       <p class="big-hours">{hoursLabel(check.quarters)}</p>
     </div>
@@ -416,9 +419,20 @@ export function TimesFields({ draft }: { draft: EntryDraft }) {
         <div class="card rounded-row">
           <span class="hint">
             {check.next_day ? 'Ends the next day. ' : ''}Rounded to the nearest quarter hour
+            {check.paused_seconds > 0 && `, less ${durationLabel(check.paused_seconds)} paused`}
           </span>
           <span class="big-hours">{hoursLabel(check.quarters)}</span>
         </div>
+      )}
+      {draft.breaks.length > 0 && (
+        // Decision 0027: a timed entry's pauses can be cleared to bill the whole span.
+        <button
+          type="button"
+          class="txt txt-left"
+          onClick={() => void actions.updateDraft({ breaks: [] })}
+        >
+          Remove breaks
+        </button>
       )}
       {problem && <ErrorText id="times-problem">{problem}</ErrorText>}
       <p class="hint">End time earlier than the start? It's counted as ending the next day.</p>

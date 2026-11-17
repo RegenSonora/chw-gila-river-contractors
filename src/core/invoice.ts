@@ -81,7 +81,7 @@ export function buildInvoiceDraft(input: InvoiceInput): InvoiceDraftResult {
   const frozen: InvoiceEntry[] = [];
   for (const e of billed) {
     const line = lines.get(e.budget_line_id);
-    const times = checkEntryTimes(e.start, e.stop);
+    const times = checkEntryTimes(e.start, e.stop, e.breaks);
     if (
       !line ||
       !times.ok ||
@@ -94,6 +94,7 @@ export function buildInvoiceDraft(input: InvoiceInput): InvoiceDraftResult {
       id: e.id,
       start: e.start,
       stop: e.stop,
+      breaks: e.breaks.map((b) => ({ ...b })),
       entry_date: e.entry_date,
       quarters: times.quarters,
       tasks: e.tasks.map((s) => {

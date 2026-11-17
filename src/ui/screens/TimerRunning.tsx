@@ -1,6 +1,7 @@
-// Timer running (SPEC §5, decision 0009): large clock, largest Stop, Discard with confirmation.
+// Timer running (SPEC §5, decisions 0009, 0027): large clock of worked time, Pause or Resume,
+// largest Stop, Discard with confirmation.
 import { useEffect, useState } from 'preact/hooks';
-import { parseIso } from '../../core';
+import { timerWorkedSeconds } from '../../core';
 import { Confirm, Page } from '../components';
 import {
   clockLabel,
@@ -32,8 +33,8 @@ export function TimerRunning() {
   }, []);
 
   if (!timer || !selectedSource) return null;
-  const startMs = parseIso(timer.start).epochMs;
-  const elapsed = Math.max(0, Math.floor((now - startMs) / 1000));
+  const paused = timer.paused_at !== null;
+  const elapsed = timerWorkedSeconds(timer, now);
   const startDate = localDateTime(timer.start).date;
 
   const stop = async () => {
@@ -54,6 +55,15 @@ export function TimerRunning() {
       mainClass="content timer"
       footer={
         <>
+          {paused ? (
+            <button type="button" class="btn btn-pause" onClick={() => void actions.resumeTimer()}>
+              Resume
+            </button>
+          ) : (
+            <button type="button" class="btn2 btn-pause" onClick={() => void actions.pauseTimer()}>
+              Pause
+            </button>
+          )}
           <button type="button" class="btn-stop" onClick={() => void stop()}>
             <span class="stop-square" aria-hidden="true" />
             Stop
@@ -70,17 +80,24 @@ export function TimerRunning() {
         </>
       }
     >
-      <p class="timer-label">
+      <p class={paused ? 'timer-label timer-paused' : 'timer-label'} aria-live="polite">
         <span class="dot" aria-hidden="true" />
-        Timer running · {selectedSource.code}
+        {paused ? 'Paused' : 'Timer running'} · {selectedSource.code}
       </p>
-      <p class="clock" role="timer" aria-label="Elapsed time">
+      <p class="clock" role="timer" aria-label="Worked time">
         {clockLabel(elapsed)}
       </p>
       <p class="timer-started">
         Started {timeLabel(timer.start)}, {dateLabel(startDate)}
       </p>
-      <p class="hint timer-note">You can close the app. The timer keeps counting.</p>
+      {timer.paused_at !== null && (
+        <p class="timer-started">Paused since {timeLabel(timer.paused_at)}</p>
+      )}
+      <p class="hint timer-note">
+        {paused
+          ? 'You can close the app. Tap Resume when you start again; paused time is not billed.'
+          : 'You can close the app. The timer keeps counting.'}
+      </p>
 
       {asking === 'discard' && (
         <Confirm
