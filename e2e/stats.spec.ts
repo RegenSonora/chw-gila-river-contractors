@@ -1,4 +1,4 @@
-// My stats, Generate under Past invoices, and the Work Hours Report (decision 0026).
+// My stats, Generate above Start timer, and the Work Hours Report (decision 0026).
 import { expect, test, type Page } from '@playwright/test';
 import { readPdf } from '../tests/files/pdf-reader.js';
 import {
@@ -105,7 +105,7 @@ async function seedInvoice(page: Page, quarters: number) {
   await expect(heading(page, 'CHW Gila River Contractors')).toBeVisible();
 }
 
-test('My stats counts invoiced hours; Generate sits under Past invoices', async ({ page }) => {
+test('My stats counts invoiced hours; Generate sits above Start timer', async ({ page }) => {
   test.setTimeout(90_000);
   await setUp(page);
   await expect(stat(page, 'Hours invoiced')).toContainText('0 hrs');
@@ -119,12 +119,19 @@ test('My stats counts invoiced hours; Generate sits under Past invoices', async 
   await expect(stat(page, 'Hours invoiced')).toContainText('+ 2 hrs not yet invoiced');
   await expect(stat(page, 'Hrs needed for pay increase')).toContainText('240 hrs');
 
-  // Generate: a row under Past invoices, the same height, light green with dark gold text.
-  const past = page.getByRole('button', { name: /Past invoices/ });
+  // Generate: in the bottom bar right above Start timer, the same 64 px as Start timer and
+  // Record time, light green with dark gold text (decision 0026, changed Nov 16).
   const generate = page.getByRole('button', { name: 'Generate Regen Invoice' });
-  const [p, g] = [await past.boundingBox(), await generate.boundingBox()];
-  expect(g && p && g.y > p.y).toBe(true);
-  expect(Math.round(g?.height ?? 0)).toBe(Math.round(p?.height ?? 0));
+  const boxes = await Promise.all(
+    [
+      generate,
+      page.getByRole('button', { name: 'Start timer' }),
+      page.getByRole('button', { name: 'Record time' }),
+    ].map((b) => b.boundingBox()),
+  );
+  const [g, s, r] = boxes;
+  expect(g && s && r && g.y < s.y && s.y < r.y).toBe(true);
+  for (const box of boxes) expect(Math.round(box?.height ?? 0)).toBe(64);
   await expect(generate).toHaveCSS('background-color', 'rgb(220, 239, 208)');
   await expect(generate).toHaveCSS('color', 'rgb(122, 88, 0)');
   await expectAccessible(page, 'home with my stats');

@@ -1,6 +1,6 @@
 # 0024 — Several tasks per entry, with the hours split between them
 
-- **Status:** Accepted, November 2, 2026
+- **Status:** Accepted by Chris, November 16, 2026
 - **Spec:** SPEC §5 (entry flow, editing), §7 (timesheet rows, entry log, fingerprint), §9 (screens); changes decision 0001 (entry log layout) for this app
 
 ## Decision

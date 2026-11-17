@@ -248,8 +248,9 @@ p {
   cursor: pointer;
 }
 
+/* Home's three big buttons: a little slimmer than 72 px, still well over 56 px (SPEC §10). */
 .btn-start {
-  min-height: 72px;
+  min-height: 64px;
   font-size: 22px;
 }
 
@@ -1264,12 +1265,10 @@ p {
   margin-top: 4px;
 }
 
-.home-generate {
-  justify-content: center;
+.btn-generate {
   background: var(--green-light);
-  border: 2px solid var(--green-border);
+  border-color: var(--green-border);
   color: var(--gold);
-  font-weight: 700;
 }
 
 /* My stats (decision 0026). */

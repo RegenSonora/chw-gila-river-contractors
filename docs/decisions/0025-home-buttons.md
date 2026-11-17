@@ -1,6 +1,6 @@
 # 0025 — Home: Generate Regen Invoice and Hand enter time, big and green
 
-- **Status:** Accepted, November 2, 2026
+- **Status:** Accepted by Chris with a change, November 16, 2026 (see the end)
 - **Spec:** SPEC §5 (Home, entering times), §6 (Generate button), §10 (styling); changes decision 0006's button label for this app
 
 ## Decision
@@ -19,3 +19,7 @@ The two actions besides the timer were asked to be as easy to see and tap as the
 ## Change, November 2, 2026
 
 "Hand enter time" is renamed **"Record time"**, and the Home text with nothing waiting now says "Start timer and start working or record time." Size and colors are unchanged.
+
+## Change, November 16, 2026
+
+Chris accepted this with one change: **Generate Regen Invoice** is a button in the bottom bar **right above Start timer** (it had moved under Past invoices in decision 0026). All three bottom buttons, Generate Regen Invoice, Start timer and Record time, are a little slimmer: 64 px tall instead of 72 px. Generate keeps the light green and dark gold of decision 0026; Record time stays green with dark brown text.
