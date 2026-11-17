@@ -1,6 +1,6 @@
 // Timer rules (SPEC §5, decision 0009): survives reload, chip locked, discard confirms, too short.
 import { expect, test } from '@playwright/test';
-import { addEntry, heading, setUp, ZONE } from './helpers.js';
+import { addEntry, expectAccessible, heading, setUp, taskBox, ZONE } from './helpers.js';
 
 test.use({ timezoneId: ZONE });
 
@@ -75,4 +75,54 @@ test('a timer that overlaps an entry goes to Enter times to fix it', async ({ pa
   await page.getByLabel('End').fill('10:15');
   await page.getByRole('button', { name: 'Next' }).click();
   await expect(heading(page, 'What did you do?')).toBeVisible();
+});
+
+test('pause and resume: one entry, paused time not billed (decision 0027)', async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-10-30T09:00:00-07:00') });
+  await setUp(page);
+  await page.getByRole('button', { name: 'Start timer' }).click();
+  await page.clock.fastForward('40:00');
+  await page.getByRole('button', { name: 'Pause' }).click();
+  await expect(page.getByText('Paused · TISUPP')).toBeVisible();
+  await expect(page.getByText(/^Paused since 9:40 AM$/)).toBeVisible();
+  await expect(page.getByRole('timer')).toHaveText(/^0:40:\d\d$/);
+  await expectAccessible(page, 'timer paused');
+
+  // A long pause survives closing the app, and the clock stays stopped.
+  await page.clock.fastForward('20:00');
+  await page.reload();
+  await expect(page.getByText('Paused · TISUPP')).toBeVisible();
+  await expect(page.getByRole('timer')).toHaveText(/^0:40:\d\d$/);
+
+  await page.getByRole('button', { name: 'Resume' }).click();
+  await expect(page.getByText('Timer running · TISUPP')).toBeVisible();
+  await page.clock.fastForward('30:00');
+  await page.getByRole('button', { name: 'Stop' }).click();
+  // 9:00–10:30 less the 20-minute pause: 1 h 10 worked, 1.25 hrs billed.
+  await expect(heading(page, 'What did you do?')).toBeVisible();
+  await expect(page.getByText(/Rounded from 1 hr 1\d min worked · 20 min paused/)).toBeVisible();
+  await expect(page.getByText('1.25 hrs', { exact: true })).toBeVisible();
+  await taskBox(page, 'Outreach').check();
+  await page.getByRole('button', { name: 'Next' }).click();
+  await page.getByRole('button', { name: 'Save entry' }).click();
+  await expect(page.getByText('1 entry · 1.25 hrs · $25.00')).toBeVisible();
+
+  // Edit shows the pause; Remove breaks bills the whole span.
+  await page.getByRole('button', { name: /Outreach/ }).click();
+  await expect(page.getByText(/less 20 min paused/)).toBeVisible();
+  await page.getByRole('button', { name: 'Remove breaks' }).click();
+  await expect(page.getByText('1.5 hrs', { exact: true })).toBeVisible();
+});
+
+test('stop while paused ends the entry at the pause', async ({ page }) => {
+  await page.clock.install({ time: new Date('2026-10-30T09:00:00-07:00') });
+  await setUp(page);
+  await page.getByRole('button', { name: 'Start timer' }).click();
+  await page.clock.fastForward('01:00:00');
+  await page.getByRole('button', { name: 'Pause' }).click();
+  // Left paused for hours: none of it is billed.
+  await page.clock.fastForward('05:00:00');
+  await page.getByRole('button', { name: 'Stop' }).click();
+  await expect(heading(page, 'What did you do?')).toBeVisible();
+  await expect(page.getByText('1 hr', { exact: true })).toBeVisible();
 });

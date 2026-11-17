@@ -41,6 +41,8 @@ Mark each step ✅ or ❌. Any ❌ blocks the release until fixed or accepted by
 
 ## 4. Timer survives closing the app
 
+- [ ] Start the timer, wait 2 minutes, tap **Pause**: the clock stops and says Paused. Close the app fully, wait 5 minutes, open it: still Paused with the same clock. Tap **Resume**, wait 8 minutes, Stop: the hours leave out the pause, and the entry shows "… paused".
+
 - [ ] Start the timer. Close the app fully. Wait 2 minutes. Open it: the clock kept counting from the start time.
 - [ ] Lock the phone for 10 minutes, unlock, open: still counting. Stop and save (or Discard timer).
 
